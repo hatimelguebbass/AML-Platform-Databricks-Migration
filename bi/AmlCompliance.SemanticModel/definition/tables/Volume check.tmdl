@@ -1,0 +1,107 @@
+/// Record counts against the median of the same kind of day (observability.volume_check).
+table 'Volume check'
+	lineageTag: 91b39281-cfa6-5ae7-bd50-46e18cfd161b
+
+	/// Dataset and date pairs outside their volume bounds, not acknowledged.
+	measure 'Volume anomalies' = CALCULATE ( COUNTROWS ( 'Volume check' ), 'Volume check'[Status] = "ANOMALY" )
+		formatString: #,0
+		lineageTag: acb763ca-8430-5679-a530-f955f2261be2
+
+	measure 'Acknowledged anomalies' = CALCULATE ( COUNTROWS ( 'Volume check' ), 'Volume check'[Status] = "ACKNOWLEDGED" )
+		formatString: #,0
+		lineageTag: 7031ec07-e22a-5388-afce-1de16531dee1
+
+	/// Latest business date published to the lakehouse.
+	measure 'Last business date' = MAX ( 'Volume check'[Business date] )
+		formatString: yyyy-mm-dd
+		lineageTag: 6b335e28-51e5-5921-a874-bb4bc7faf305
+
+	column 'Business date'
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: bd9eccb7-81bc-5b4e-ad83-6761786957fe
+		summarizeBy: none
+		sourceColumn: business_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Dataset
+		dataType: string
+		lineageTag: 5dcb5078-f5d2-572c-b3e6-e3445b970b14
+		summarizeBy: none
+		sourceColumn: dataset
+
+	column Records
+		dataType: int64
+		formatString: #,0
+		lineageTag: 0cf3cc24-ad9a-56f5-b740-bd58b0ecb6af
+		summarizeBy: none
+		sourceColumn: record_count
+
+	column 'Baseline days'
+		dataType: int64
+		formatString: 0
+		lineageTag: d472694a-1eac-55ff-839c-9977d1ce5d43
+		summarizeBy: none
+		sourceColumn: baseline_days
+
+	column 'Baseline median'
+		dataType: double
+		formatString: #,0
+		lineageTag: cefbcaf4-d1d3-5933-9c0f-1d379c0cfc9d
+		summarizeBy: none
+		sourceColumn: baseline_median
+
+	/// Records over the baseline median.
+	column 'Volume ratio'
+		dataType: double
+		formatString: 0.00
+		lineageTag: 7c6ab7f6-cc3c-5a1a-ad43-98c5307f1fbb
+		summarizeBy: none
+		sourceColumn: volume_ratio
+
+	column 'Min ratio'
+		dataType: double
+		formatString: 0.00
+		lineageTag: b7bff065-fbe3-5bf0-8a1a-9396b0c64713
+		summarizeBy: none
+		sourceColumn: min_ratio
+
+	column 'Max ratio'
+		dataType: double
+		formatString: 0.00
+		lineageTag: ee11e224-98d5-5aea-be89-285147a5fd65
+		summarizeBy: none
+		sourceColumn: max_ratio
+
+	/// An anomaly on this dataset holds the publish.
+	column 'Is blocking'
+		dataType: boolean
+		lineageTag: 3b1fefa6-25fe-51a7-9b0c-35a0ee9666ac
+		summarizeBy: none
+		sourceColumn: is_blocking
+
+	/// OK, NO_BASELINE, ANOMALY or ACKNOWLEDGED.
+	column Status
+		dataType: string
+		lineageTag: c358366b-5211-5729-8abb-f082b8b0154b
+		summarizeBy: none
+		sourceColumn: status
+
+	column Acknowledgement
+		dataType: string
+		lineageTag: 5b71db16-69ee-5e5c-9247-2325566f2c6c
+		summarizeBy: none
+		sourceColumn: acknowledgement
+
+	partition 'Volume check' = m
+		mode: import
+		source =
+				let
+				    Source = Lakehouse{[Name = "observability", Kind = "Schema"]}[Data]{[Name = "volume_check", Kind = "Table"]}[Data],
+				    Columns = Table.SelectColumns(Source, {"business_date", "dataset", "record_count", "baseline_days", "baseline_median", "volume_ratio", "min_ratio", "max_ratio", "is_blocking", "status", "acknowledgement"}),
+				    Typed = Table.TransformColumnTypes(Columns, {{"business_date", type date}, {"dataset", type text}, {"record_count", Int64.Type}, {"baseline_days", Int64.Type}, {"baseline_median", type number}, {"volume_ratio", type number}, {"min_ratio", type number}, {"max_ratio", type number}, {"is_blocking", type logical}, {"status", type text}, {"acknowledgement", type text}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

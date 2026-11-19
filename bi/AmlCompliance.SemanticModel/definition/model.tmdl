@@ -1,0 +1,24 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["ServingPlatform","DatabricksHost","DatabricksHttpPath","DatabricksCatalog","TrinoHost","TrinoPort","Lakehouse","OnPremises","Alert","Alert evidence","Rule","Sanctions hit","Volume check","Distribution drift","Layer reconciliation","Core banking reconciliation","Date"]
+
+ref table Alert
+ref table 'Alert evidence'
+ref table Rule
+ref table 'Sanctions hit'
+ref table 'Volume check'
+ref table 'Distribution drift'
+ref table 'Layer reconciliation'
+ref table 'Core banking reconciliation'
+ref table Date
+
+ref cultureInfo en-US

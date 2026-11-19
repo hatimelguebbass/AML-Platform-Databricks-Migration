@@ -1,0 +1,154 @@
+{
+  "format_version": 1,
+  "sqlglot_version": "30.31.0",
+  "source_commit": "5da92299e29cedb9b2b963a986b5993a9ef1113e",
+  "engine_version": "Databricks SQL 2026.44",
+  "measured_on": "2026-11-16",
+  "models": [
+    {
+      "relation": "silver.customer_history",
+      "outcome": "fails",
+      "rewritten_functions": {},
+      "source_lines": 103,
+      "port_rows": null,
+      "only_in_translation": null,
+      "only_in_port": null,
+      "error": "[UNRESOLVED_COLUMN.WITH_SUGGESTION] A column, variable, or function parameter with name `birth_date` cannot be resolved. Did you mean one of the following? [`birth_year`, `_event_date`, `created_at`, `is_pep`, `_op`]. SQLSTATE: 42703; line 1 pos 771"
+    },
+    {
+      "relation": "silver.account_history",
+      "outcome": "identical",
+      "rewritten_functions": {},
+      "source_lines": 91,
+      "port_rows": 518581,
+      "only_in_translation": 0,
+      "only_in_port": 0,
+      "error": null
+    },
+    {
+      "relation": "silver.card_history",
+      "outcome": "identical",
+      "rewritten_functions": {},
+      "source_lines": 88,
+      "port_rows": 87451,
+      "only_in_translation": 0,
+      "only_in_port": 0,
+      "error": null
+    },
+    {
+      "relation": "silver.party",
+      "outcome": "identical",
+      "rewritten_functions": {
+        "array_agg(\u2026)": "collect_list(\u2026)"
+      },
+      "source_lines": 44,
+      "port_rows": 166207,
+      "only_in_translation": 0,
+      "only_in_port": 0,
+      "error": null
+    },
+    {
+      "relation": "silver.payment_transfer",
+      "outcome": "identical",
+      "rewritten_functions": {},
+      "source_lines": 39,
+      "port_rows": 5078345,
+      "only_in_translation": 0,
+      "only_in_port": 0,
+      "error": null
+    },
+    {
+      "relation": "silver.card_transaction",
+      "outcome": "identical",
+      "rewritten_functions": {},
+      "source_lines": 44,
+      "port_rows": 1800000,
+      "only_in_translation": 0,
+      "only_in_port": 0,
+      "error": null
+    },
+    {
+      "relation": "silver.fx_rate",
+      "outcome": "identical",
+      "rewritten_functions": {
+        "array_agg(\u2026)": "collect_list(\u2026)",
+        "cardinality(\u2026)": "size(\u2026)"
+      },
+      "source_lines": 46,
+      "port_rows": 15,
+      "only_in_translation": 0,
+      "only_in_port": 0,
+      "error": null
+    },
+    {
+      "relation": "gold.aml_alert_transfer",
+      "outcome": "fails",
+      "rewritten_functions": {
+        "lower(to_hex(\u2026))": "lower(hex(\u2026))",
+        "md5(\u2026)": "unhex(md5(\u2026))",
+        "to_utf8(\u2026)": "encode(\u2026, 'utf-8')"
+      },
+      "source_lines": 261,
+      "port_rows": null,
+      "only_in_translation": null,
+      "only_in_port": null,
+      "error": "[DUPLICATED_CTE_NAMES] CTE definition can't have duplicate names: `credits`, `flagged`, `debits`. SQLSTATE: 42602"
+    },
+    {
+      "relation": "gold.aml_alert",
+      "outcome": "identical",
+      "rewritten_functions": {},
+      "source_lines": 48,
+      "port_rows": 19395,
+      "only_in_translation": 0,
+      "only_in_port": 0,
+      "error": null
+    },
+    {
+      "relation": "gold.aml_rule",
+      "outcome": "identical",
+      "rewritten_functions": {},
+      "source_lines": 69,
+      "port_rows": 7,
+      "only_in_translation": 0,
+      "only_in_port": 0,
+      "error": null
+    },
+    {
+      "relation": "observability.dataset_profile",
+      "outcome": "identical",
+      "rewritten_functions": {},
+      "source_lines": 96,
+      "port_rows": 713,
+      "only_in_translation": 0,
+      "only_in_port": 0,
+      "error": null
+    },
+    {
+      "relation": "observability.volume_check",
+      "outcome": "fails",
+      "rewritten_functions": {
+        "array_agg(\u2026)": "collect_list(\u2026)",
+        "cardinality(\u2026)": "size(\u2026)",
+        "day_of_week(\u2026)": "((dayofweek(\u2026) % 7) + 1)"
+      },
+      "source_lines": 125,
+      "port_rows": null,
+      "only_in_translation": null,
+      "only_in_port": null,
+      "error": "[DUPLICATED_CTE_NAMES] CTE definition can't have duplicate names: `checked`. SQLSTATE: 42602"
+    },
+    {
+      "relation": "observability.distribution_drift",
+      "outcome": "different",
+      "rewritten_functions": {
+        "day_of_week(\u2026)": "((dayofweek(\u2026) % 7) + 1)"
+      },
+      "source_lines": 122,
+      "port_rows": 144,
+      "only_in_translation": 117,
+      "only_in_port": 117,
+      "error": null
+    }
+  ]
+}

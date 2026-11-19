@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "volume_anomalies_card",
+  "position": {
+    "x": 232.0,
+    "y": 88,
+    "z": 4000,
+    "height": 96,
+    "width": 192.0,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Volume check"
+                    }
+                  },
+                  "Property": "Volume anomalies"
+                }
+              },
+              "queryRef": "Volume check.Volume anomalies"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

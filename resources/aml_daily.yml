@@ -1,0 +1,177 @@
+# The daily pipeline of one business date, as the source's Airflow DAG aml_daily ran it (ADR 0006):
+# bronze is audited, each layer is built in its staging schema and audited, the date's volumes,
+# distributions and layer totals are checked against its history (ADR 0009), and the layers
+# readers see are written only once every audit passed. Started by the on-premises scheduler after it
+# delivered the date (make daily DATE=...); business_date `all` rebuilds every date.
+#
+# Retries cover the tasks a transient failure can stop (compute, warehouse, network). Audits and
+# ingestion are never retried: a failed test or a rejected delivery fails the same way twice.
+# Serverless retries a task without a retry policy on its own, and drops `max_retries: 0` as unset:
+# disable_auto_optimization is what stops it.
+resources:
+  jobs:
+    aml_daily:
+      name: aml_daily
+      description: >-
+        One business date through bronze audit, staged silver and gold builds with their audits, and
+        publication of the audited layers. business_date `all` rebuilds every date.
+      # One staging copy per layer: two runs would build into the same tables.
+      max_concurrent_runs: 1
+      queue:
+        enabled: true
+      timeout_seconds: 7200
+      health:
+        rules:
+          # A date takes about ten minutes on Free Edition; three times that is worth a look.
+          - metric: RUN_DURATION_SECONDS
+            op: GREATER_THAN
+            value: 1800
+      email_notifications:
+        on_failure: ["${var.alert_recipient}"]
+        on_duration_warning_threshold_exceeded: ["${var.alert_recipient}"]
+      notification_settings:
+        no_alert_for_canceled_runs: true
+        no_alert_for_skipped_runs: true
+      parameters:
+        # YYYY-MM-DD, or `all` to rebuild every date. The empty default fails the first audit: a
+        # repair run started without parameters resolves them to their defaults, and must not
+        # rebuild everything in place of one date.
+        - name: business_date
+          default: ""
+      tasks:
+        - task_key: ingest
+          description: Ingests what landed (job ingest_bronze); fails if it rejected a delivery.
+          run_job_task:
+            job_id: ${resources.jobs.ingest_bronze.id}
+
+        - task_key: audit_bronze
+          description: The date's bronze slices come from one accepted delivery, with the rows its manifest declared.
+          disable_auto_optimization: true
+          depends_on: [{task_key: ingest}]
+          environment_key: dbt
+          dbt_task: &dbt
+            source: WORKSPACE
+            project_directory: ${workspace.file_path}/transform
+            warehouse_id: ${var.warehouse_id}
+            catalog: ${var.catalog}
+            schema: silver
+            commands:
+              - >-
+                dbt test --selector bronze_audit
+                --vars '{business_date: "{{job.parameters.business_date}}", pipeline_run: "{{job.run_id}}"}'
+
+        - task_key: open_staging
+          description: Resets the dated staging tables to the published slices, undoing what a failed run left.
+          depends_on: [{task_key: audit_bronze}]
+          environment_key: lakemig
+          max_retries: 1
+          min_retry_interval_millis: 60000
+          python_wheel_task:
+            package_name: lakemig
+            entry_point: lakemig-open-staging
+            parameters:
+              - --catalog=${var.catalog}
+              - --layers=reference,silver,gold,observability
+              - --business-date={{job.parameters.business_date}}
+
+        - task_key: build_silver
+          depends_on: [{task_key: open_staging}]
+          environment_key: dbt
+          max_retries: 1
+          min_retry_interval_millis: 60000
+          dbt_task:
+            <<: *dbt
+            commands:
+              - >-
+                dbt seed --selector silver
+                --vars '{business_date: "{{job.parameters.business_date}}", pipeline_run: "{{job.run_id}}"}'
+              - >-
+                dbt run --selector silver
+                --vars '{business_date: "{{job.parameters.business_date}}", pipeline_run: "{{job.run_id}}"}'
+
+        - task_key: audit_silver
+          disable_auto_optimization: true
+          depends_on: [{task_key: build_silver}]
+          environment_key: dbt
+          dbt_task:
+            <<: *dbt
+            commands:
+              - >-
+                dbt test --selector silver
+                --vars '{business_date: "{{job.parameters.business_date}}", pipeline_run: "{{job.run_id}}"}'
+
+        - task_key: build_gold
+          depends_on: [{task_key: audit_silver}]
+          environment_key: dbt
+          max_retries: 1
+          min_retry_interval_millis: 60000
+          dbt_task:
+            <<: *dbt
+            commands:
+              - >-
+                dbt run --selector gold
+                --vars '{business_date: "{{job.parameters.business_date}}", pipeline_run: "{{job.run_id}}"}'
+
+        - task_key: audit_gold
+          disable_auto_optimization: true
+          depends_on: [{task_key: build_gold}]
+          environment_key: dbt
+          dbt_task:
+            <<: *dbt
+            commands:
+              - >-
+                dbt test --selector gold
+                --vars '{business_date: "{{job.parameters.business_date}}", pipeline_run: "{{job.run_id}}"}'
+
+        - task_key: build_observability
+          description: Volume, drift and layer reconciliation of the date against the history already published.
+          depends_on: [{task_key: audit_gold}]
+          environment_key: dbt
+          max_retries: 1
+          min_retry_interval_millis: 60000
+          dbt_task:
+            <<: *dbt
+            commands:
+              - >-
+                dbt run --selector observability
+                --vars '{business_date: "{{job.parameters.business_date}}", pipeline_run: "{{job.run_id}}"}'
+
+        - task_key: audit_observability
+          description: A blocking volume anomaly or an unreconciled feed holds the publication; drifts only warn.
+          disable_auto_optimization: true
+          depends_on: [{task_key: build_observability}]
+          environment_key: dbt
+          dbt_task:
+            <<: *dbt
+            commands:
+              - >-
+                dbt test --selector observability
+                --vars '{business_date: "{{job.parameters.business_date}}", pipeline_run: "{{job.run_id}}"}'
+
+        - task_key: publish
+          description: Copies the audited slices (or every table on a rebuild) into the published layers.
+          depends_on: [{task_key: audit_observability}]
+          environment_key: lakemig
+          max_retries: 1
+          min_retry_interval_millis: 60000
+          python_wheel_task:
+            package_name: lakemig
+            entry_point: lakemig-publish
+            parameters:
+              - --catalog=${var.catalog}
+              - --layers=reference,silver,gold,observability
+              - --business-date={{job.parameters.business_date}}
+              - --run-id={{job.run_id}}
+
+      environments:
+        - environment_key: dbt
+          spec:
+            environment_version: ${var.serverless_environment_version}
+            dependencies:
+              - dbt-core==1.11.17
+              - dbt-databricks==1.13.0
+        - environment_key: lakemig
+          spec:
+            environment_version: ${var.serverless_environment_version}
+            dependencies:
+              - ../dist/*.whl

@@ -1,0 +1,91 @@
+/// Current customers whose name matches a UN or OFAC listed name (gold.sanctions_hit).
+table 'Sanctions hit'
+	lineageTag: a1c0f336-606a-51a1-a333-17a0831b3340
+
+	/// Customer and listed entry pairs to review.
+	measure 'Sanctions hits' = COUNTROWS ( 'Sanctions hit' )
+		formatString: #,0
+		lineageTag: e26b1825-c05e-57be-bea4-9795ccb41c12
+
+	measure 'Customers with a hit' = DISTINCTCOUNT ( 'Sanctions hit'[Customer ID] )
+		formatString: #,0
+		lineageTag: a2d4b8a4-c3b0-5a14-80a3-3625f2b0038f
+
+	column 'Hit ID'
+		dataType: string
+		isHidden
+		lineageTag: 768ead07-d0e3-598a-9d3b-5877df09c612
+		summarizeBy: none
+		sourceColumn: hit_id
+
+	column 'Customer ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6433a13e-07d7-57a7-902e-dc6052bdf450
+		summarizeBy: none
+		sourceColumn: customer_id
+
+	column 'Party ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: 769ebdaa-be91-53ac-9a7f-84a8ac01556e
+		summarizeBy: none
+		sourceColumn: party_id
+
+	/// UN or OFAC.
+	column List
+		dataType: string
+		lineageTag: 620ece6f-c17d-5b4e-94cb-299202119cda
+		summarizeBy: none
+		sourceColumn: list_name
+
+	column 'Entry ID'
+		dataType: string
+		lineageTag: ef7f6ff8-9532-5623-8fbb-74b90108eab0
+		summarizeBy: none
+		sourceColumn: entry_id
+
+	column 'Entry type'
+		dataType: string
+		lineageTag: f7e249c8-33bb-5ff8-8cb1-183ec5df5786
+		summarizeBy: none
+		sourceColumn: entry_type
+
+	column 'Listed name'
+		dataType: string
+		lineageTag: cb803392-dd04-547e-91ef-35e22408e89a
+		summarizeBy: none
+		sourceColumn: listed_name
+
+	/// PRIMARY or ALIAS.
+	column 'Name type'
+		dataType: string
+		lineageTag: 7409e7a6-6b27-5813-a802-34fbf06d6833
+		summarizeBy: none
+		sourceColumn: name_type
+
+	/// EXACT, TOKENS or FUZZY.
+	column 'Match type'
+		dataType: string
+		lineageTag: 1edba045-a369-5d68-a920-7226ed013dcc
+		summarizeBy: none
+		sourceColumn: match_type
+
+	column 'Name similarity'
+		dataType: double
+		formatString: 0.00
+		lineageTag: ade38fda-0359-5a6a-8878-92fb91bc479f
+		summarizeBy: none
+		sourceColumn: name_similarity
+
+	partition 'Sanctions hit' = m
+		mode: import
+		source =
+				let
+				    Source = OnPremises{[Name = "gold", Kind = "Schema"]}[Data]{[Name = "sanctions_hit", Kind = "Table"]}[Data],
+				    Columns = Table.SelectColumns(Source, {"hit_id", "customer_id", "party_id", "list_name", "entry_id", "entry_type", "listed_name", "name_type", "match_type", "name_similarity"}),
+				    Typed = Table.TransformColumnTypes(Columns, {{"hit_id", type text}, {"customer_id", Int64.Type}, {"party_id", Int64.Type}, {"list_name", type text}, {"entry_id", type text}, {"entry_type", type text}, {"listed_name", type text}, {"name_type", type text}, {"match_type", type text}, {"name_similarity", type number}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

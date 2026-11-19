@@ -1,0 +1,12 @@
+# Offline parsing only (make dbt-parse, dbt-selectors): nothing connects. The daily job's dbt tasks
+# generate the real profile from their SQL warehouse and identity.
+aml:
+  target: parse
+  outputs:
+    parse:
+      type: databricks
+      host: parse.invalid
+      http_path: /sql/1.0/warehouses/parse
+      token: parse
+      catalog: aml_dev
+      schema: silver

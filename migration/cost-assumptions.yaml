@@ -1,0 +1,57 @@
+# Usage the Azure window (steps 6 to 9) is expected to bill, before anything is created.
+# Quantities are ranges; each line states what it rests on. Step 8 measures the same lines from
+# the billing system tables and Cost Management, and the estimate is compared with the bill.
+currency: USD
+# First region is the planned one: EU, close to Morocco, offering Azure Databricks serverless.
+# The others show how much the choice matters; step 6 confirms the subscription allows it.
+regions: [westeurope, francecentral, northeurope]
+window_days: 14
+
+meters:
+  - key: jobs_serverless_dbu
+    service: Azure Databricks
+    product: Azure Databricks Regional
+    sku: Premium Automated Serverless Compute
+    meter: Premium Automated Serverless Compute DBU
+  - key: sql_serverless_dbu
+    service: Azure Databricks
+    product: Azure Databricks Regional
+    sku: Premium Serverless SQL
+    meter: Premium Serverless SQL DBU
+  - key: adls_hot_lrs_stored
+    service: Storage
+    product: Azure Data Lake Storage Gen2 Hierarchical Namespace
+    sku: Hot LRS
+    meter: Hot LRS Data Stored
+
+usage:
+  - name: Daily pipeline, bronze to gold (serverless jobs)
+    meter: jobs_serverless_dbu
+    # Initial load: the 18 business dates of the source, once, at the per-run range below.
+    once: {low: 9, expected: 27, high: 72}
+    per_day: {low: 0.5, expected: 1.5, high: 4}
+    basis: >-
+      DBU per business date. The source processes one date (about 280,000 transfers and 100,000
+      card records) in about two and a half minutes of Spark and dbt on four cores; serverless
+      jobs bill by the DBU-hour of the compute they scale to, which is unknown before a run, hence
+      the wide range. Initial load is 18 dates at the same rate.
+  - name: Deployments and platform checks (serverless jobs)
+    meter: jobs_serverless_dbu
+    per_day: {low: 0.1, expected: 0.3, high: 1}
+    basis: >-
+      One platform check run per deployment, a few deployments a day; each run is one small
+      serverless task.
+  - name: SQL warehouse, 2X-Small (Power BI, parity reports, queries)
+    meter: sql_serverless_dbu
+    per_day: {low: 2, expected: 6, high: 16}
+    basis: >-
+      A 2X-Small serverless SQL warehouse bills 4 DBU per hour of uptime; 0.5 to 4 hours a day,
+      with auto-stop after 10 idle minutes.
+
+storage:
+  meter: adls_hot_lrs_stored
+  copies: {low: 1.5, expected: 2, high: 3}
+  basis: >-
+    Bytes of the exported and rebuilt objects as stored by the source (Parquet, zstd), times the
+    copies the target keeps: the landed exports, the current Delta files, and the older versions
+    retained for time travel until vacuumed.

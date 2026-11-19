@@ -1,0 +1,104 @@
+{
+  "retrieved_on": "2026-11-14",
+  "prices": [
+    {
+      "key": "adls_hot_lrs_stored",
+      "region": "francecentral",
+      "product": "Azure Data Lake Storage Gen2 Hierarchical Namespace",
+      "sku": "Hot LRS",
+      "meter": "Hot LRS Data Stored",
+      "unit": "1 GB/Month",
+      "price": 0.0192,
+      "currency": "USD",
+      "effective_from": "2019-04-01"
+    },
+    {
+      "key": "jobs_serverless_dbu",
+      "region": "francecentral",
+      "product": "Azure Databricks Regional",
+      "sku": "Premium Automated Serverless Compute",
+      "meter": "Premium Automated Serverless Compute DBU",
+      "unit": "1 Hour",
+      "price": 0.5,
+      "currency": "USD",
+      "effective_from": "2025-05-01"
+    },
+    {
+      "key": "sql_serverless_dbu",
+      "region": "francecentral",
+      "product": "Azure Databricks Regional",
+      "sku": "Premium Serverless SQL",
+      "meter": "Premium Serverless SQL DBU",
+      "unit": "1 Hour",
+      "price": 0.91,
+      "currency": "USD",
+      "effective_from": "2024-02-01"
+    },
+    {
+      "key": "adls_hot_lrs_stored",
+      "region": "northeurope",
+      "product": "Azure Data Lake Storage Gen2 Hierarchical Namespace",
+      "sku": "Hot LRS",
+      "meter": "Hot LRS Data Stored",
+      "unit": "1 GB/Month",
+      "price": 0.022,
+      "currency": "USD",
+      "effective_from": "2019-04-01"
+    },
+    {
+      "key": "jobs_serverless_dbu",
+      "region": "northeurope",
+      "product": "Azure Databricks Regional",
+      "sku": "Premium Automated Serverless Compute",
+      "meter": "Premium Automated Serverless Compute DBU",
+      "unit": "1 Hour",
+      "price": 0.47,
+      "currency": "USD",
+      "effective_from": "2025-05-01"
+    },
+    {
+      "key": "sql_serverless_dbu",
+      "region": "northeurope",
+      "product": "Azure Databricks Regional",
+      "sku": "Premium Serverless SQL",
+      "meter": "Premium Serverless SQL DBU",
+      "unit": "1 Hour",
+      "price": 0.91,
+      "currency": "USD",
+      "effective_from": "2024-02-01"
+    },
+    {
+      "key": "adls_hot_lrs_stored",
+      "region": "westeurope",
+      "product": "Azure Data Lake Storage Gen2 Hierarchical Namespace",
+      "sku": "Hot LRS",
+      "meter": "Hot LRS Data Stored",
+      "unit": "1 GB/Month",
+      "price": 0.0196,
+      "currency": "USD",
+      "effective_from": "2019-04-01"
+    },
+    {
+      "key": "jobs_serverless_dbu",
+      "region": "westeurope",
+      "product": "Azure Databricks Regional",
+      "sku": "Premium Automated Serverless Compute",
+      "meter": "Premium Automated Serverless Compute DBU",
+      "unit": "1 Hour",
+      "price": 0.5,
+      "currency": "USD",
+      "effective_from": "2025-05-01"
+    },
+    {
+      "key": "sql_serverless_dbu",
+      "region": "westeurope",
+      "product": "Azure Databricks Regional",
+      "sku": "Premium Serverless SQL",
+      "meter": "Premium Serverless SQL DBU",
+      "unit": "1 Hour",
+      "price": 0.91,
+      "currency": "USD",
+      "effective_from": "2024-02-01"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+models:
+  - name: party_member
+    description: >
+      The party of every current customer record, as resolved on premises on the names and
+      identity documents (customer 360). A party is identified by its lowest customer_id.
+    columns:
+      - name: customer_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+        data_tests: [unique, not_null]
+      - name: party_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+        data_tests: [not_null]
+      - name: party_size
+        description: Number of customer records of the party.
+        data_type: bigint
+      - name: _delivery_id
+        description: Delivery of the on-premises export the snapshot came with.
+        data_type: string
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz
+
+  - name: party
+    description: >
+      Customer 360: one row per party with the records, risk and accounts it holds across
+      them. The risk rating is the highest of its records.
+    columns:
+      - name: party_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+        data_tests: [unique, not_null]
+      - name: customer_type
+        data_type: string
+        data_tests: [not_null]
+      - name: customer_ids
+        data_type: array<bigint>
+        databricks_tags: {classification: indirect}
+      - name: customer_count
+        data_type: bigint
+      - name: risk_rating
+        data_type: string
+        data_tests: [not_null]
+      - name: is_pep
+        data_type: boolean
+        databricks_tags: {classification: indirect}
+      - name: customer_since
+        data_type: date
+      - name: residence_countries
+        data_type: array<string>
+        databricks_tags: {classification: indirect}
+      - name: account_count
+        data_type: bigint
+      - name: active_account_count
+        data_type: bigint
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz

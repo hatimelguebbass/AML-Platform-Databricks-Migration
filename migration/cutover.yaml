@@ -1,0 +1,28 @@
+# The cutover of the compliance report from the source's Trino to the target's SQL warehouse
+# (docs/cutover.md). `lakemig bi` renders bi/ from the pinned source's semantic model with these
+# decisions; `lakemig assess` checks that every relation the rendered model imports is either
+# published by the transformations with the columns it reads, or placed here with a reason.
+
+# Every imported relation not listed below is read from the target catalog.
+report:
+  # Read through the on-premises data gateway, from the source's Trino, after the cutover too.
+  on_premises:
+    observability.corebanking_reconciliation: >-
+      Reconciles the lakehouse with the core banking database, which stays on premises (waves.yaml);
+      it holds counts per entity only, so the report reads it where it is computed.
+    gold.sanctions_hit: >-
+      Screening runs where the customer names are (ADR 0003): the listed name of each hit is a direct
+      identifier and never crosses, and the investigators who review hits work on premises.
+  # Dropped from the report with the visuals that read them.
+  retired:
+    observability.pipeline_run: >-
+      Run history of the source's Airflow pipeline. The target's runs are in the Lakeflow job UI and
+      system.lakeflow, and its publications in observability.publication (ADR 0010).
+
+# The serving switch of the rendered model: Power BI's dataset parameter that the cutover sets
+# and a rollback resets.
+parameter: ServingPlatform
+
+# Days the source keeps running its daily pipeline after the cutover: a rollback within the window
+# switches the report back without any catch-up of the source (ADR 0010).
+rollback_window_days: 14

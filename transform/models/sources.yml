@@ -1,0 +1,33 @@
+sources:
+  - name: bronze
+    description: >
+      Exports of the on-premises platform, one slice per delivery date, accepted against their
+      manifests (ADR 0003, 0004). Direct identifiers never cross; account numbers and card tokens
+      are keyed pseudonyms.
+    schema: bronze
+    tables:
+      - name: payment_transfer
+        description: Payments hub transfers of each business date.
+      - name: card_transaction
+        description: Card processor detail records of each business date.
+      - name: corebanking_customer
+        description: Captured versions of core banking customers, without their direct identifiers.
+      - name: corebanking_account
+        description: Captured versions of core banking accounts.
+      - name: corebanking_card
+        description: Captured versions of core banking cards.
+      - name: change_batch
+        description: One row per topic partition read by a change data capture run, with the business date it closes.
+      - name: party_member
+        description: The party of every customer record, resolved on premises where the names are. A full snapshot per delivery.
+      - name: sanctions_hit
+        description: Customers matching a UN or OFAC listed name, screened on premises. A full snapshot per delivery, without the listed names.
+
+  - name: landing
+    description: Register of the ingestion's decisions on each delivery (ADR 0004).
+    schema: landing
+    tables:
+      - name: delivery_log
+        description: >
+          One row per decision on a delivery (accepted, rejected, superseded), append-only. The
+          latest row of a delivery is its status; the summary holds the rows of each table.

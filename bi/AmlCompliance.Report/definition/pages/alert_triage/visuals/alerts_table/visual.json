@@ -1,0 +1,207 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "alerts_table",
+  "position": {
+    "x": 24,
+    "y": 148,
+    "z": 6000,
+    "height": 300,
+    "width": 1232,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert"
+                    }
+                  },
+                  "Property": "Alert ID"
+                }
+              },
+              "queryRef": "Alert.Alert ID"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert"
+                    }
+                  },
+                  "Property": "Business date"
+                }
+              },
+              "queryRef": "Alert.Business date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Rule"
+                    }
+                  },
+                  "Property": "Rule name"
+                }
+              },
+              "queryRef": "Rule.Rule name"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert"
+                    }
+                  },
+                  "Property": "Account ID"
+                }
+              },
+              "queryRef": "Alert.Account ID"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert"
+                    }
+                  },
+                  "Property": "Customer ID"
+                }
+              },
+              "queryRef": "Alert.Customer ID"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert"
+                    }
+                  },
+                  "Property": "Party ID"
+                }
+              },
+              "queryRef": "Alert.Party ID"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert"
+                    }
+                  },
+                  "Property": "Customer risk rating"
+                }
+              },
+              "queryRef": "Alert.Customer risk rating"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert"
+                    }
+                  },
+                  "Property": "Is PEP"
+                }
+              },
+              "queryRef": "Alert.Is PEP"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert evidence"
+                    }
+                  },
+                  "Property": "Evidence transfers"
+                }
+              },
+              "queryRef": "Alert evidence.Evidence transfers"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert"
+                    }
+                  },
+                  "Property": "Total credited (USD)"
+                }
+              },
+              "queryRef": "Alert.Total credited (USD)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert"
+                    }
+                  },
+                  "Property": "Total debited (USD)"
+                }
+              },
+              "queryRef": "Alert.Total debited (USD)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Alert"
+                  }
+                },
+                "Property": "Total credited (USD)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Alerts: select one to see its transfers'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

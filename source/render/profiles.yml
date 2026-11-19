@@ -1,0 +1,11 @@
+# Renders the source project's SQL offline (make source-sql): dbt only needs an adapter to compile,
+# and an in-process DuckDB database answers its relation lookups. The database is named after the
+# target catalog, so the compiled SQL reads the same tables as the port it is compared with.
+aml:
+  target: render
+  outputs:
+    render:
+      type: duckdb
+      path: "{{ env_var('LAKEMIG_RENDER_DATABASE') }}"
+      schema: silver
+      threads: 1

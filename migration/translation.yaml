@@ -1,0 +1,102 @@
+# Changes made by hand when porting each model of the source dbt project (Trino) to Databricks SQL,
+# and why. `lakemig assess` requires an entry for every ported model; `make translation` measures
+# whether sqlglot alone would have given the same rows (docs/assessment/translation.md).
+# Kinds: boundary (the hybrid boundary changed an input), semantics (same SQL, other meaning),
+# types, syntax, engine (a Delta or Unity Catalog feature replaces a Trino or Iceberg one).
+
+common:
+  - change: Dated models replace their business date with Delta REPLACE WHERE (dbt strategy replace_where), not a delete pre-hook then an append, and are not partitioned
+    reason: >-
+      One atomic commit per date instead of two, so a failed run never leaves a date half deleted.
+      Delta does not need partitions at this size; clustering is measured in step 8.
+    kind: engine
+  - change: Load time written as convert_timezone('UTC', current_timestamp())
+    reason: The source wrote UTC wall-clock time without zone with AT TIME ZONE, which Databricks SQL does not have.
+    kind: syntax
+  - change: Contract types in Spark names (string, timestamp_ntz for timestamp(6), timestamp for timestamp(6) with time zone, array<T>)
+    reason: dbt compares the declared types with the warehouse's.
+    kind: types
+  - change: Columns tagged with their classification, pseudonym columns masked, tables created with their full column definition
+    reason: Unity Catalog policy of ADR 0005, checked against the classification by `lakemig assess`.
+    kind: engine
+
+models:
+  silver.customer_history:
+    - change: Birth year read as delivered instead of year(birth_date)
+      reason: The birth date never crosses the boundary; the export reduces it to its year (ADR 0003).
+      kind: boundary
+    - change: Change batches read from bronze.change_batch
+      reason: The source's audit.change_batch crosses as one more delivered table.
+      kind: boundary
+    - change: Dates of capture and update instants taken in UTC with convert_timezone
+      reason: >-
+        A cast of a TIMESTAMP to DATE uses the session time zone on Databricks; Trino used the zone
+        of the value, UTC. Identical on a UTC session, wrong by a day around midnight on another.
+      kind: semantics
+    - change: Years cast to bigint
+      reason: year() returns int on Databricks and bigint on Trino; the contract keeps the source's type.
+      kind: types
+  silver.account_history:
+    - change: Change batches read from bronze.change_batch
+      reason: The source's audit.change_batch crosses as one more delivered table.
+      kind: boundary
+    - change: Dates of capture and update instants taken in UTC with convert_timezone
+      reason: As for silver.customer_history.
+      kind: semantics
+  silver.card_history:
+    - change: Change batches read from bronze.change_batch
+      reason: The source's audit.change_batch crosses as one more delivered table.
+      kind: boundary
+    - change: Dates of capture and update instants taken in UTC with convert_timezone
+      reason: As for silver.customer_history.
+      kind: semantics
+  silver.party:
+    - change: array_agg(customer_id order by customer_id) written array_sort(array_agg(customer_id))
+      reason: >-
+        Databricks SQL has no ORDER BY inside array_agg. sqlglot translates it to collect_list and
+        drops the ordering: its rows matched on the measured run only because of execution order,
+        which Spark does not guarantee.
+      kind: syntax
+  silver.payment_transfer: []
+  silver.card_transaction: []
+  silver.fx_rate: []
+  gold.aml_rule: []
+  gold.aml_alert_transfer:
+    - change: Alert id written md5(text) instead of lower(to_hex(md5(to_utf8(text))))
+      reason: Databricks md5 hashes the UTF-8 bytes and returns lower-case hex, the same id.
+      kind: syntax
+    - change: Volume spike average cast to decimal(38, 2)
+      reason: >-
+        Trino divides decimal(38,2) by an integer at scale 2, rounding half up; Databricks keeps
+        scale 6. A threshold compared with an average at another scale flips boundary cases.
+      kind: semantics
+  gold.aml_alert:
+    - change: Credited and debited sums cast to decimal(38, 2)
+      reason: Databricks sums decimal(22,2) to decimal(32,2), Trino to decimal(38,2); the contract keeps the source's type.
+      kind: types
+  observability.dataset_profile:
+    - change: Bins cast to string instead of varchar
+      reason: Spark has no unbounded varchar; a string is what the source's varchar was.
+      kind: types
+  observability.volume_check:
+    - change: Median positions computed with div instead of /
+      reason: >-
+        Trino's / on two integers is an integer division; Spark's returns a fraction, and
+        element_at with a fractional position fails. Same positions, same median.
+      kind: semantics
+    - change: Ratio written case when ... end instead of the two-argument if
+      reason: Spark's if takes exactly three arguments; Trino's returns null without the third.
+      kind: syntax
+    - change: Baseline counts gathered with collect_list instead of array_agg
+      reason: Both are sorted by array_sort before the median is read, so the order of gathering does not matter.
+      kind: syntax
+    - change: Weekend recognized by dayofweek in (1, 7) instead of day_of_week in (6, 7)
+      reason: >-
+        Spark numbers days from Sunday (1) to Saturday (7), Trino from Monday (1) to Sunday (7).
+        sqlglot rewrites day_of_week(d) as (dayofweek(d) % 7) + 1, which numbers Saturday 1 and
+        Friday 7: Thursdays and Fridays become the weekend and every baseline changes.
+      kind: semantics
+  observability.distribution_drift:
+    - change: Weekend recognized by dayofweek in (1, 7) instead of day_of_week in (6, 7)
+      reason: As for observability.volume_check.
+      kind: semantics

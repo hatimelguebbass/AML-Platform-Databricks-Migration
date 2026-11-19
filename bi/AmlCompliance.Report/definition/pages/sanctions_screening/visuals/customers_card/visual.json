@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "customers_card",
+  "position": {
+    "x": 648.0,
+    "y": 88,
+    "z": 3000,
+    "height": 96,
+    "width": 608.0,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sanctions hit"
+                    }
+                  },
+                  "Property": "Customers with a hit"
+                }
+              },
+              "queryRef": "Sanctions hit.Customers with a hit"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

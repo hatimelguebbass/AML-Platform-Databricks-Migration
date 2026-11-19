@@ -1,0 +1,63 @@
+models:
+  - name: card_transaction
+    description: >
+      Card processor transactions in major units, with the card and account they belong to,
+      one slice per business date. A pipeline run replaces its business date.
+    columns:
+      - name: txn_ref
+        data_type: string
+        data_tests: [not_null, unique_in_loaded_dates]
+      - name: business_date
+        data_type: date
+        data_tests: [not_null]
+      - name: txn_local_at
+        description: Terminal local time, zone not delivered.
+        data_type: timestamp_ntz
+      - name: txn_type
+        data_type: string
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [WDL, PUR, REF]
+      - name: channel
+        data_type: string
+      - name: card_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+      - name: account_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+      - name: card_token
+        data_type: string
+        databricks_tags: {classification: indirect}
+        column_mask: {function: governance.mask_pseudonym}
+      - name: mcc
+        data_type: string
+      - name: merchant_id
+        data_type: string
+      - name: merchant_name
+        data_type: string
+        databricks_tags: {classification: indirect}
+      - name: merchant_city
+        data_type: string
+      - name: merchant_country
+        data_type: string
+      - name: currency
+        data_type: string
+      - name: amount
+        data_type: decimal(22,6)
+      - name: signed_amount
+        description: Negative for refunds.
+        data_type: decimal(22,6)
+      - name: response_code
+        data_type: string
+      - name: is_approved
+        data_type: boolean
+      - name: auth_code
+        data_type: string
+      - name: _source_file
+        data_type: string
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz

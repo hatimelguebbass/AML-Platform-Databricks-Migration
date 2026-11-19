@@ -1,0 +1,124 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "corebanking_table",
+  "position": {
+    "x": 800,
+    "y": 200,
+    "z": 10000,
+    "height": 160,
+    "width": 456,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Core banking reconciliation"
+                    }
+                  },
+                  "Property": "Entity"
+                }
+              },
+              "queryRef": "Core banking reconciliation.Entity"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Core banking reconciliation"
+                    }
+                  },
+                  "Property": "Source rows"
+                }
+              },
+              "queryRef": "Core banking reconciliation.Source rows"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Core banking reconciliation"
+                    }
+                  },
+                  "Property": "Lakehouse rows"
+                }
+              },
+              "queryRef": "Core banking reconciliation.Lakehouse rows"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Core banking reconciliation"
+                    }
+                  },
+                  "Property": "Missing in lakehouse"
+                }
+              },
+              "queryRef": "Core banking reconciliation.Missing in lakehouse"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Core banking reconciliation"
+                    }
+                  },
+                  "Property": "Unexpected in lakehouse"
+                }
+              },
+              "queryRef": "Core banking reconciliation.Unexpected in lakehouse"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Core banking reconciliation"
+                    }
+                  },
+                  "Property": "Mismatched"
+                }
+              },
+              "queryRef": "Core banking reconciliation.Mismatched"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Core banking against silver'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

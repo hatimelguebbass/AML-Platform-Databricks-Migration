@@ -1,0 +1,79 @@
+/// Current core banking rows against silver, column by column (observability.corebanking_reconciliation).
+table 'Core banking reconciliation'
+	lineageTag: eaf2276d-604f-5d3d-a027-d6458514b9f5
+
+	/// Rows missing, unexpected or different between the core banking database and silver.
+	measure 'Core banking differences' =
+			SUM ( 'Core banking reconciliation'[Missing in lakehouse] )
+			+ SUM ( 'Core banking reconciliation'[Unexpected in lakehouse] )
+			+ SUM ( 'Core banking reconciliation'[Mismatched] )
+		formatString: #,0
+		lineageTag: d951644d-ee61-53bf-b978-7a31b7a27462
+
+	column Entity
+		dataType: string
+		lineageTag: a88332ce-6e99-5511-b8a3-c677b86c713c
+		summarizeBy: none
+		sourceColumn: entity
+
+	column 'Captured until'
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn:ss
+		lineageTag: 63152edf-d187-5ada-99e0-79f2a9202882
+		summarizeBy: none
+		sourceColumn: captured_until
+
+	column 'Source rows'
+		dataType: int64
+		formatString: #,0
+		lineageTag: e067fcf0-b6d1-5985-bc49-9a13dc43011a
+		summarizeBy: none
+		sourceColumn: source_rows
+
+	column 'Lakehouse rows'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 1156f674-c25e-58b6-a268-12a265c7d744
+		summarizeBy: none
+		sourceColumn: lakehouse_rows
+
+	column 'Missing in lakehouse'
+		dataType: int64
+		formatString: #,0
+		lineageTag: f6ff2734-1054-5b32-a889-dae051edd65b
+		summarizeBy: none
+		sourceColumn: missing_in_lakehouse
+
+	column 'Unexpected in lakehouse'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 0228a738-1f4b-58b5-9a07-e283370a5985
+		summarizeBy: none
+		sourceColumn: unexpected_in_lakehouse
+
+	column Mismatched
+		dataType: int64
+		formatString: #,0
+		lineageTag: bca6659c-c843-590a-aa63-54e9cd0433d8
+		summarizeBy: none
+		sourceColumn: mismatched
+
+	/// Modified after the last captured change, left out of the comparison.
+	column 'In flight'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 76f24f27-3d0d-5efd-8ed1-eef6ec165d27
+		summarizeBy: none
+		sourceColumn: in_flight
+
+	partition 'Core banking reconciliation' = m
+		mode: import
+		source =
+				let
+				    Source = OnPremises{[Name = "observability", Kind = "Schema"]}[Data]{[Name = "corebanking_reconciliation", Kind = "Table"]}[Data],
+				    Columns = Table.SelectColumns(Source, {"entity", "captured_until", "source_rows", "lakehouse_rows", "missing_in_lakehouse", "unexpected_in_lakehouse", "mismatched", "in_flight"}),
+				    Typed = Table.TransformColumnTypes(Columns, {{"entity", type text}, {"captured_until", type datetime}, {"source_rows", Int64.Type}, {"lakehouse_rows", Int64.Type}, {"missing_in_lakehouse", Int64.Type}, {"unexpected_in_lakehouse", Int64.Type}, {"mismatched", Int64.Type}, {"in_flight", Int64.Type}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,3609 @@
+{
+  "source_repository": "https://github.com/Revoyaldev/aml-compliance-platform",
+  "source_commit": "5da92299e29cedb9b2b963a986b5993a9ef1113e",
+  "collected_at": "2026-11-14T22:23:11+00:00",
+  "engine_version": "484",
+  "objects": [
+    {
+      "schema": "audit",
+      "name": "change_batch",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "source",
+          "data_type": "varchar"
+        },
+        {
+          "name": "contract_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "contract_version",
+          "data_type": "varchar"
+        },
+        {
+          "name": "topic",
+          "data_type": "varchar"
+        },
+        {
+          "name": "kafka_partition",
+          "data_type": "integer"
+        },
+        {
+          "name": "target_table",
+          "data_type": "varchar"
+        },
+        {
+          "name": "start_offset",
+          "data_type": "bigint"
+        },
+        {
+          "name": "end_offset",
+          "data_type": "bigint"
+        },
+        {
+          "name": "events_read",
+          "data_type": "bigint"
+        },
+        {
+          "name": "tombstones",
+          "data_type": "bigint"
+        },
+        {
+          "name": "records_written",
+          "data_type": "bigint"
+        },
+        {
+          "name": "processed_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "business_date",
+          "data_type": "date"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 9,
+        "data_bytes": 41793,
+        "data_files": 9
+      }
+    },
+    {
+      "schema": "audit",
+      "name": "dbt_node_run",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "invocation_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "command",
+          "data_type": "varchar"
+        },
+        {
+          "name": "selection",
+          "data_type": "varchar"
+        },
+        {
+          "name": "business_date",
+          "data_type": "date"
+        },
+        {
+          "name": "node_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "resource_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "status",
+          "data_type": "varchar"
+        },
+        {
+          "name": "failures",
+          "data_type": "bigint"
+        },
+        {
+          "name": "rows_affected",
+          "data_type": "bigint"
+        },
+        {
+          "name": "execution_seconds",
+          "data_type": "double"
+        },
+        {
+          "name": "run_started_at",
+          "data_type": "timestamp(6)"
+        },
+        {
+          "name": "recorded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 189,
+        "data_bytes": 67463,
+        "data_files": 22
+      }
+    },
+    {
+      "schema": "audit",
+      "name": "ingestion_file",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "source",
+          "data_type": "varchar"
+        },
+        {
+          "name": "contract_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "contract_version",
+          "data_type": "varchar"
+        },
+        {
+          "name": "file_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "file_sha256",
+          "data_type": "varchar"
+        },
+        {
+          "name": "target_table",
+          "data_type": "varchar"
+        },
+        {
+          "name": "business_date",
+          "data_type": "date"
+        },
+        {
+          "name": "status",
+          "data_type": "varchar"
+        },
+        {
+          "name": "reason",
+          "data_type": "varchar"
+        },
+        {
+          "name": "records_in_file",
+          "data_type": "bigint"
+        },
+        {
+          "name": "records_written",
+          "data_type": "bigint"
+        },
+        {
+          "name": "duplicates_dropped",
+          "data_type": "bigint"
+        },
+        {
+          "name": "already_present",
+          "data_type": "bigint"
+        },
+        {
+          "name": "processed_at",
+          "data_type": "timestamp(6) with time zone"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 39,
+        "data_bytes": 206954,
+        "data_files": 39
+      }
+    },
+    {
+      "schema": "audit",
+      "name": "ingestion_run",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "source",
+          "data_type": "varchar"
+        },
+        {
+          "name": "started_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "finished_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "status",
+          "data_type": "varchar"
+        },
+        {
+          "name": "files_accepted",
+          "data_type": "integer"
+        },
+        {
+          "name": "files_rejected",
+          "data_type": "integer"
+        },
+        {
+          "name": "files_skipped",
+          "data_type": "integer"
+        },
+        {
+          "name": "files_pending",
+          "data_type": "integer"
+        },
+        {
+          "name": "records_written",
+          "data_type": "bigint"
+        },
+        {
+          "name": "error",
+          "data_type": "varchar"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 5,
+        "data_bytes": 16613,
+        "data_files": 5
+      }
+    },
+    {
+      "schema": "audit",
+      "name": "publish_check",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "check_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "target_table",
+          "data_type": "varchar"
+        },
+        {
+          "name": "passed",
+          "data_type": "boolean"
+        },
+        {
+          "name": "detail",
+          "data_type": "varchar"
+        },
+        {
+          "name": "checked_at",
+          "data_type": "timestamp(6) with time zone"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 16,
+        "data_bytes": 10111,
+        "data_files": 4
+      }
+    },
+    {
+      "schema": "bronze",
+      "name": "card_transaction",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "record_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "txn_ref",
+          "data_type": "varchar"
+        },
+        {
+          "name": "card_token",
+          "data_type": "varchar"
+        },
+        {
+          "name": "txn_local_time",
+          "data_type": "timestamp(6)"
+        },
+        {
+          "name": "txn_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "channel",
+          "data_type": "varchar"
+        },
+        {
+          "name": "mcc",
+          "data_type": "varchar"
+        },
+        {
+          "name": "merchant_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "merchant_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "merchant_city",
+          "data_type": "varchar"
+        },
+        {
+          "name": "merchant_country",
+          "data_type": "varchar"
+        },
+        {
+          "name": "amount_minor",
+          "data_type": "bigint"
+        },
+        {
+          "name": "currency",
+          "data_type": "varchar"
+        },
+        {
+          "name": "response_code",
+          "data_type": "varchar"
+        },
+        {
+          "name": "auth_code",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_business_date",
+          "data_type": "date"
+        },
+        {
+          "name": "_source_file",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_ingest_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_ingested_at",
+          "data_type": "timestamp(6) with time zone"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 1800000,
+        "data_bytes": 44649807,
+        "data_files": 18
+      }
+    },
+    {
+      "schema": "bronze",
+      "name": "corebanking_account",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "account_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "bank_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "account_number",
+          "data_type": "varchar"
+        },
+        {
+          "name": "rib",
+          "data_type": "varchar"
+        },
+        {
+          "name": "account_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "currency",
+          "data_type": "varchar"
+        },
+        {
+          "name": "status",
+          "data_type": "varchar"
+        },
+        {
+          "name": "opened_on",
+          "data_type": "date"
+        },
+        {
+          "name": "closed_on",
+          "data_type": "date"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "_op",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_snapshot",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_source_lsn",
+          "data_type": "bigint"
+        },
+        {
+          "name": "_source_tx_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "_source_committed_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "_kafka_topic",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_kafka_partition",
+          "data_type": "integer"
+        },
+        {
+          "name": "_kafka_offset",
+          "data_type": "bigint"
+        },
+        {
+          "name": "_ingest_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_ingested_at",
+          "data_type": "timestamp(6) with time zone"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 518581,
+        "data_bytes": 15106834,
+        "data_files": 3
+      }
+    },
+    {
+      "schema": "bronze",
+      "name": "corebanking_card",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "card_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "account_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "card_token",
+          "data_type": "varchar"
+        },
+        {
+          "name": "scheme",
+          "data_type": "varchar"
+        },
+        {
+          "name": "pan_last4",
+          "data_type": "varchar"
+        },
+        {
+          "name": "product",
+          "data_type": "varchar"
+        },
+        {
+          "name": "status",
+          "data_type": "varchar"
+        },
+        {
+          "name": "issued_on",
+          "data_type": "date"
+        },
+        {
+          "name": "expires_on",
+          "data_type": "date"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "_op",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_snapshot",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_source_lsn",
+          "data_type": "bigint"
+        },
+        {
+          "name": "_source_tx_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "_source_committed_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "_kafka_topic",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_kafka_partition",
+          "data_type": "integer"
+        },
+        {
+          "name": "_kafka_offset",
+          "data_type": "bigint"
+        },
+        {
+          "name": "_ingest_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_ingested_at",
+          "data_type": "timestamp(6) with time zone"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 87451,
+        "data_bytes": 2714479,
+        "data_files": 3
+      }
+    },
+    {
+      "schema": "bronze",
+      "name": "corebanking_customer",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "customer_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "first_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "last_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "gender",
+          "data_type": "varchar"
+        },
+        {
+          "name": "birth_date",
+          "data_type": "date"
+        },
+        {
+          "name": "legal_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "legal_form",
+          "data_type": "varchar"
+        },
+        {
+          "name": "incorporation_date",
+          "data_type": "date"
+        },
+        {
+          "name": "id_document_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "id_document_number",
+          "data_type": "varchar"
+        },
+        {
+          "name": "tax_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "nationality",
+          "data_type": "varchar"
+        },
+        {
+          "name": "residence_country",
+          "data_type": "varchar"
+        },
+        {
+          "name": "occupation",
+          "data_type": "varchar"
+        },
+        {
+          "name": "address_line",
+          "data_type": "varchar"
+        },
+        {
+          "name": "city",
+          "data_type": "varchar"
+        },
+        {
+          "name": "postal_code",
+          "data_type": "varchar"
+        },
+        {
+          "name": "phone",
+          "data_type": "varchar"
+        },
+        {
+          "name": "email",
+          "data_type": "varchar"
+        },
+        {
+          "name": "risk_rating",
+          "data_type": "varchar"
+        },
+        {
+          "name": "is_pep",
+          "data_type": "boolean"
+        },
+        {
+          "name": "customer_since",
+          "data_type": "date"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "_op",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_snapshot",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_source_lsn",
+          "data_type": "bigint"
+        },
+        {
+          "name": "_source_tx_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "_source_committed_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "_kafka_topic",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_kafka_partition",
+          "data_type": "integer"
+        },
+        {
+          "name": "_kafka_offset",
+          "data_type": "bigint"
+        },
+        {
+          "name": "_ingest_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_ingested_at",
+          "data_type": "timestamp(6) with time zone"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 167848,
+        "data_bytes": 7381536,
+        "data_files": 3
+      }
+    },
+    {
+      "schema": "bronze",
+      "name": "payment_transfer",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "transfer_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "booked_at",
+          "data_type": "timestamp(6)"
+        },
+        {
+          "name": "originator_bank_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "originator_account",
+          "data_type": "varchar"
+        },
+        {
+          "name": "beneficiary_bank_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "beneficiary_account",
+          "data_type": "varchar"
+        },
+        {
+          "name": "amount_paid",
+          "data_type": "decimal(22,6)"
+        },
+        {
+          "name": "payment_currency",
+          "data_type": "varchar"
+        },
+        {
+          "name": "amount_received",
+          "data_type": "decimal(22,6)"
+        },
+        {
+          "name": "receiving_currency",
+          "data_type": "varchar"
+        },
+        {
+          "name": "payment_format",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_business_date",
+          "data_type": "date"
+        },
+        {
+          "name": "_source_file",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_ingest_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_ingested_at",
+          "data_type": "timestamp(6) with time zone"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 5078345,
+        "data_bytes": 107007746,
+        "data_files": 18
+      }
+    },
+    {
+      "schema": "bronze",
+      "name": "sanctions_ofac_sdn_entry",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "uid",
+          "data_type": "bigint"
+        },
+        {
+          "name": "firstname",
+          "data_type": "varchar"
+        },
+        {
+          "name": "lastname",
+          "data_type": "varchar"
+        },
+        {
+          "name": "sdntype",
+          "data_type": "varchar"
+        },
+        {
+          "name": "programlist",
+          "data_type": "row(\"program\" array(varchar))"
+        },
+        {
+          "name": "akalist",
+          "data_type": "row(\"aka\" array(row(\"uid\" bigint, \"type\" varchar, \"category\" varchar, \"lastName\" varchar, \"firstName\" varchar)))"
+        },
+        {
+          "name": "dateofbirthlist",
+          "data_type": "row(\"dateOfBirthItem\" array(row(\"uid\" bigint, \"dateOfBirth\" varchar, \"mainEntry\" boolean)))"
+        },
+        {
+          "name": "nationalitylist",
+          "data_type": "row(\"nationality\" array(row(\"uid\" bigint, \"country\" varchar, \"mainEntry\" boolean)))"
+        },
+        {
+          "name": "_list_published",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_retrieved_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "_source_file",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_ingest_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_ingested_at",
+          "data_type": "timestamp(6) with time zone"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 19565,
+        "data_bytes": 711295,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "bronze",
+      "name": "sanctions_un_entity",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "reference_number",
+          "data_type": "varchar"
+        },
+        {
+          "name": "first_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "name_original_script",
+          "data_type": "varchar"
+        },
+        {
+          "name": "un_list_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "listed_on",
+          "data_type": "varchar"
+        },
+        {
+          "name": "entity_alias",
+          "data_type": "array(row(\"QUALITY\" varchar, \"ALIAS_NAME\" varchar))"
+        },
+        {
+          "name": "_list_published",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_retrieved_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "_source_file",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_ingest_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_ingested_at",
+          "data_type": "timestamp(6) with time zone"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 274,
+        "data_bytes": 18692,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "bronze",
+      "name": "sanctions_un_individual",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "reference_number",
+          "data_type": "varchar"
+        },
+        {
+          "name": "first_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "second_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "third_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "fourth_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "name_original_script",
+          "data_type": "varchar"
+        },
+        {
+          "name": "un_list_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "listed_on",
+          "data_type": "varchar"
+        },
+        {
+          "name": "individual_alias",
+          "data_type": "array(row(\"QUALITY\" varchar, \"ALIAS_NAME\" varchar))"
+        },
+        {
+          "name": "individual_date_of_birth",
+          "data_type": "array(row(\"TYPE_OF_DATE\" varchar, \"DATE\" varchar, \"YEAR\" varchar, \"FROM_YEAR\" varchar, \"TO_YEAR\" varchar))"
+        },
+        {
+          "name": "nationality",
+          "data_type": "row(\"VALUE\" array(varchar))"
+        },
+        {
+          "name": "_list_published",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_retrieved_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "_source_file",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_ingest_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_ingested_at",
+          "data_type": "timestamp(6) with time zone"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 733,
+        "data_bytes": 54024,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "corebanking.core",
+      "name": "account",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "account_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "bank_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "account_number",
+          "data_type": "varchar"
+        },
+        {
+          "name": "rib",
+          "data_type": "char(24)"
+        },
+        {
+          "name": "account_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "currency",
+          "data_type": "char(3)"
+        },
+        {
+          "name": "status",
+          "data_type": "varchar"
+        },
+        {
+          "name": "opened_on",
+          "data_type": "date"
+        },
+        {
+          "name": "closed_on",
+          "data_type": "date"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp(6) with time zone"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 518581,
+        "data_bytes": null,
+        "data_files": null
+      }
+    },
+    {
+      "schema": "corebanking.core",
+      "name": "card",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "card_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "account_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "card_token",
+          "data_type": "char(16)"
+        },
+        {
+          "name": "scheme",
+          "data_type": "varchar"
+        },
+        {
+          "name": "pan_last4",
+          "data_type": "char(4)"
+        },
+        {
+          "name": "product",
+          "data_type": "varchar"
+        },
+        {
+          "name": "status",
+          "data_type": "varchar"
+        },
+        {
+          "name": "issued_on",
+          "data_type": "date"
+        },
+        {
+          "name": "expires_on",
+          "data_type": "date"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp(6) with time zone"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 87451,
+        "data_bytes": null,
+        "data_files": null
+      }
+    },
+    {
+      "schema": "corebanking.core",
+      "name": "customer",
+      "kind": "source_table",
+      "columns": [
+        {
+          "name": "customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "customer_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "first_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "last_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "gender",
+          "data_type": "char(1)"
+        },
+        {
+          "name": "birth_date",
+          "data_type": "date"
+        },
+        {
+          "name": "legal_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "legal_form",
+          "data_type": "varchar"
+        },
+        {
+          "name": "incorporation_date",
+          "data_type": "date"
+        },
+        {
+          "name": "id_document_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "id_document_number",
+          "data_type": "varchar"
+        },
+        {
+          "name": "tax_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "nationality",
+          "data_type": "char(2)"
+        },
+        {
+          "name": "residence_country",
+          "data_type": "char(2)"
+        },
+        {
+          "name": "occupation",
+          "data_type": "varchar"
+        },
+        {
+          "name": "address_line",
+          "data_type": "varchar"
+        },
+        {
+          "name": "city",
+          "data_type": "varchar"
+        },
+        {
+          "name": "postal_code",
+          "data_type": "varchar"
+        },
+        {
+          "name": "phone",
+          "data_type": "varchar"
+        },
+        {
+          "name": "email",
+          "data_type": "varchar"
+        },
+        {
+          "name": "risk_rating",
+          "data_type": "varchar"
+        },
+        {
+          "name": "is_pep",
+          "data_type": "boolean"
+        },
+        {
+          "name": "customer_since",
+          "data_type": "date"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp(6) with time zone"
+        }
+      ],
+      "materialization": null,
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 0,
+      "volume": {
+        "rows": 167848,
+        "data_bytes": null,
+        "data_files": null
+      }
+    },
+    {
+      "schema": "gold",
+      "name": "aml_alert",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "alert_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "rule_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "business_date",
+          "data_type": "date"
+        },
+        {
+          "name": "account_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "party_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "customer_risk_rating",
+          "data_type": "varchar"
+        },
+        {
+          "name": "is_pep",
+          "data_type": "boolean"
+        },
+        {
+          "name": "transfer_count",
+          "data_type": "bigint"
+        },
+        {
+          "name": "counterparty_count",
+          "data_type": "bigint"
+        },
+        {
+          "name": "credited_amount",
+          "data_type": "decimal(38,2)"
+        },
+        {
+          "name": "debited_amount",
+          "data_type": "decimal(38,2)"
+        },
+        {
+          "name": "first_booked_at",
+          "data_type": "timestamp(6)"
+        },
+        {
+          "name": "last_booked_at",
+          "data_type": "timestamp(6)"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "incremental",
+      "depends_on": [
+        "gold.aml_alert_transfer",
+        "silver.account_history",
+        "silver.customer_history",
+        "silver.party_member"
+      ],
+      "functions": {
+        "cast": 2,
+        "coalesce": 2,
+        "count": 2,
+        "max": 1,
+        "min": 1,
+        "sum": 2
+      },
+      "macros": [
+        "business_date_filter",
+        "in_force_on",
+        "lineage_columns",
+        "replace_business_date"
+      ],
+      "tests": 9,
+      "volume": {
+        "rows": 19395,
+        "data_bytes": 818696,
+        "data_files": 17
+      }
+    },
+    {
+      "schema": "gold",
+      "name": "aml_alert_transfer",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "alert_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "rule_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "business_date",
+          "data_type": "date"
+        },
+        {
+          "name": "account_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "transfer_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "evidence_role",
+          "data_type": "varchar"
+        },
+        {
+          "name": "booked_at",
+          "data_type": "timestamp(6)"
+        },
+        {
+          "name": "counterparty_account_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "amount",
+          "data_type": "decimal(22,2)"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "incremental",
+      "depends_on": [
+        "gold.monitored_transfer",
+        "gold.rule_fan_in",
+        "gold.rule_fan_out",
+        "gold.rule_high_risk_jurisdiction",
+        "gold.rule_pass_through",
+        "gold.rule_round_trip",
+        "gold.rule_structuring",
+        "gold.rule_volume_spike"
+      ],
+      "functions": {
+        "cast": 5,
+        "coalesce": 1,
+        "count": 4,
+        "lower": 1,
+        "md5": 1,
+        "sum": 3,
+        "to_utf8": 1
+      },
+      "macros": [
+        "lineage_columns",
+        "replace_business_date"
+      ],
+      "tests": 8,
+      "volume": {
+        "rows": 127187,
+        "data_bytes": 1960093,
+        "data_files": 17
+      }
+    },
+    {
+      "schema": "gold",
+      "name": "aml_rule",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "rule_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "rule_key",
+          "data_type": "varchar"
+        },
+        {
+          "name": "rule_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "typology",
+          "data_type": "varchar"
+        },
+        {
+          "name": "description",
+          "data_type": "varchar"
+        },
+        {
+          "name": "parameters",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [],
+      "functions": {
+        "cast": 56
+      },
+      "macros": [
+        "lineage_columns"
+      ],
+      "tests": 4,
+      "volume": {
+        "rows": 7,
+        "data_bytes": 16966,
+        "data_files": 7
+      }
+    },
+    {
+      "schema": "gold",
+      "name": "monitored_transfer",
+      "kind": "model",
+      "columns": [],
+      "materialization": "ephemeral",
+      "depends_on": [
+        "silver.fx_rate",
+        "silver.payment_transfer"
+      ],
+      "functions": {
+        "cast": 1
+      },
+      "macros": [
+        "aml_lookback_days",
+        "business_date_window"
+      ],
+      "tests": 0,
+      "volume": null
+    },
+    {
+      "schema": "gold",
+      "name": "rule_fan_in",
+      "kind": "model",
+      "columns": [],
+      "materialization": "ephemeral",
+      "depends_on": [
+        "gold.monitored_transfer"
+      ],
+      "functions": {
+        "cast": 1,
+        "count": 1
+      },
+      "macros": [
+        "aml_rule",
+        "business_date_filter",
+        "sql_values"
+      ],
+      "tests": 0,
+      "volume": null
+    },
+    {
+      "schema": "gold",
+      "name": "rule_fan_out",
+      "kind": "model",
+      "columns": [],
+      "materialization": "ephemeral",
+      "depends_on": [
+        "gold.monitored_transfer"
+      ],
+      "functions": {
+        "cast": 1,
+        "count": 1
+      },
+      "macros": [
+        "aml_rule",
+        "business_date_filter",
+        "sql_values"
+      ],
+      "tests": 0,
+      "volume": null
+    },
+    {
+      "schema": "gold",
+      "name": "rule_high_risk_jurisdiction",
+      "kind": "model",
+      "columns": [],
+      "materialization": "ephemeral",
+      "depends_on": [
+        "gold.monitored_transfer",
+        "reference.high_risk_jurisdiction",
+        "silver.account_history",
+        "silver.customer_history"
+      ],
+      "functions": {
+        "cast": 1,
+        "sum": 1
+      },
+      "macros": [
+        "aml_rule",
+        "business_date_filter",
+        "in_force_on"
+      ],
+      "tests": 0,
+      "volume": null
+    },
+    {
+      "schema": "gold",
+      "name": "rule_pass_through",
+      "kind": "model",
+      "columns": [],
+      "materialization": "ephemeral",
+      "depends_on": [
+        "gold.monitored_transfer"
+      ],
+      "functions": {
+        "cast": 1
+      },
+      "macros": [
+        "aml_rule",
+        "business_date_filter",
+        "business_date_window",
+        "days_covering",
+        "sql_values"
+      ],
+      "tests": 1,
+      "volume": null
+    },
+    {
+      "schema": "gold",
+      "name": "rule_round_trip",
+      "kind": "model",
+      "columns": [],
+      "materialization": "ephemeral",
+      "depends_on": [
+        "gold.monitored_transfer"
+      ],
+      "functions": {
+        "cast": 1
+      },
+      "macros": [
+        "aml_rule",
+        "business_date_filter",
+        "business_date_window",
+        "days_covering"
+      ],
+      "tests": 1,
+      "volume": null
+    },
+    {
+      "schema": "gold",
+      "name": "rule_structuring",
+      "kind": "model",
+      "columns": [],
+      "materialization": "ephemeral",
+      "depends_on": [
+        "gold.monitored_transfer"
+      ],
+      "functions": {
+        "cast": 1,
+        "count": 1
+      },
+      "macros": [
+        "aml_rule",
+        "business_date_filter"
+      ],
+      "tests": 0,
+      "volume": null
+    },
+    {
+      "schema": "gold",
+      "name": "rule_volume_spike",
+      "kind": "model",
+      "columns": [],
+      "materialization": "ephemeral",
+      "depends_on": [
+        "gold.monitored_transfer"
+      ],
+      "functions": {
+        "cast": 1,
+        "coalesce": 1,
+        "count": 1,
+        "sum": 2
+      },
+      "macros": [
+        "aml_rule",
+        "business_date_filter"
+      ],
+      "tests": 1,
+      "volume": null
+    },
+    {
+      "schema": "gold",
+      "name": "sanctions_hit",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "hit_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "party_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "list_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "entry_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "entry_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "listed_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "name_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "match_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "name_similarity",
+          "data_type": "double"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [
+        "restricted.customer_identity",
+        "silver.party_member",
+        "silver.sanctions_name"
+      ],
+      "functions": {
+        "array_distinct": 2,
+        "array_intersect": 1,
+        "array_sort": 2,
+        "cardinality": 5,
+        "cast": 5,
+        "coalesce": 1,
+        "filter": 2,
+        "greatest": 2,
+        "least": 1,
+        "length": 4,
+        "levenshtein_distance": 1,
+        "lower": 1,
+        "md5": 1,
+        "normalize": 2,
+        "regexp_extract_all": 2,
+        "round": 1,
+        "row_number": 1,
+        "to_utf8": 1,
+        "unnest": 4,
+        "upper": 2
+      },
+      "macros": [
+        "lineage_columns",
+        "name_similarity",
+        "name_tokens"
+      ],
+      "tests": 7,
+      "volume": {
+        "rows": 98,
+        "data_bytes": 6014,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "observability",
+      "name": "corebanking_reconciliation",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "entity",
+          "data_type": "varchar"
+        },
+        {
+          "name": "captured_until",
+          "data_type": "timestamp(6)"
+        },
+        {
+          "name": "source_rows",
+          "data_type": "bigint"
+        },
+        {
+          "name": "lakehouse_rows",
+          "data_type": "bigint"
+        },
+        {
+          "name": "missing_in_lakehouse",
+          "data_type": "bigint"
+        },
+        {
+          "name": "unexpected_in_lakehouse",
+          "data_type": "bigint"
+        },
+        {
+          "name": "mismatched",
+          "data_type": "bigint"
+        },
+        {
+          "name": "in_flight",
+          "data_type": "bigint"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [
+        "bronze.corebanking_account",
+        "bronze.corebanking_card",
+        "bronze.corebanking_customer",
+        "corebanking.core.account",
+        "corebanking.core.card",
+        "corebanking.core.customer",
+        "silver.account_history",
+        "silver.card_history",
+        "silver.customer_history"
+      ],
+      "functions": {
+        "cast": 84,
+        "coalesce": 3,
+        "count_if": 18,
+        "max": 6,
+        "regexp_replace": 1,
+        "year": 2
+      },
+      "macros": [
+        "normalize_bank_id",
+        "reconcile_current_state"
+      ],
+      "tests": 5,
+      "volume": {
+        "rows": 3,
+        "data_bytes": 4055,
+        "data_files": 3
+      }
+    },
+    {
+      "schema": "observability",
+      "name": "dataset_profile",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "business_date",
+          "data_type": "date"
+        },
+        {
+          "name": "dataset",
+          "data_type": "varchar"
+        },
+        {
+          "name": "dimension",
+          "data_type": "varchar"
+        },
+        {
+          "name": "bin",
+          "data_type": "varchar"
+        },
+        {
+          "name": "record_count",
+          "data_type": "bigint"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "incremental",
+      "depends_on": [
+        "gold.aml_alert",
+        "silver.card_transaction",
+        "silver.fx_rate",
+        "silver.payment_transfer"
+      ],
+      "functions": {
+        "cast": 21,
+        "coalesce": 1,
+        "count": 11,
+        "if": 11
+      },
+      "macros": [
+        "amount_band",
+        "business_date_filter",
+        "lineage_columns",
+        "profile",
+        "replace_business_date"
+      ],
+      "tests": 6,
+      "volume": {
+        "rows": 713,
+        "data_bytes": 35380,
+        "data_files": 18
+      }
+    },
+    {
+      "schema": "observability",
+      "name": "distribution_drift",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "business_date",
+          "data_type": "date"
+        },
+        {
+          "name": "dataset",
+          "data_type": "varchar"
+        },
+        {
+          "name": "dimension",
+          "data_type": "varchar"
+        },
+        {
+          "name": "bins",
+          "data_type": "integer"
+        },
+        {
+          "name": "baseline_days",
+          "data_type": "integer"
+        },
+        {
+          "name": "stability_index",
+          "data_type": "double"
+        },
+        {
+          "name": "status",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "incremental",
+      "depends_on": [
+        "observability.dataset_profile",
+        "reference.acknowledged_anomaly"
+      ],
+      "functions": {
+        "cast": 9,
+        "coalesce": 7,
+        "count": 2,
+        "day_of_week": 2,
+        "exists": 1,
+        "greatest": 2,
+        "if": 7,
+        "ln": 1,
+        "nullif": 2,
+        "row_number": 1,
+        "sum": 4
+      },
+      "macros": [
+        "baseline_dates",
+        "business_date_filter",
+        "lineage_columns",
+        "replace_business_date"
+      ],
+      "tests": 7,
+      "volume": {
+        "rows": 144,
+        "data_bytes": 36523,
+        "data_files": 18
+      }
+    },
+    {
+      "schema": "observability",
+      "name": "layer_reconciliation",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "business_date",
+          "data_type": "date"
+        },
+        {
+          "name": "feed",
+          "data_type": "varchar"
+        },
+        {
+          "name": "landed_records",
+          "data_type": "bigint"
+        },
+        {
+          "name": "bronze_records",
+          "data_type": "bigint"
+        },
+        {
+          "name": "silver_records",
+          "data_type": "bigint"
+        },
+        {
+          "name": "bronze_amount",
+          "data_type": "decimal(38,6)"
+        },
+        {
+          "name": "silver_amount",
+          "data_type": "decimal(38,6)"
+        },
+        {
+          "name": "is_reconciled",
+          "data_type": "boolean"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "incremental",
+      "depends_on": [
+        "audit.ingestion_file",
+        "bronze.card_transaction",
+        "bronze.payment_transfer",
+        "reference.iso_currency",
+        "silver.card_transaction",
+        "silver.payment_transfer"
+      ],
+      "functions": {
+        "cast": 7,
+        "coalesce": 17,
+        "count": 4,
+        "power": 1,
+        "row_number": 1,
+        "sum": 5
+      },
+      "macros": [
+        "business_date_filter",
+        "lineage_columns",
+        "replace_business_date"
+      ],
+      "tests": 4,
+      "volume": {
+        "rows": 36,
+        "data_bytes": 34684,
+        "data_files": 18
+      }
+    },
+    {
+      "schema": "observability",
+      "name": "pipeline_run",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "business_date",
+          "data_type": "date"
+        },
+        {
+          "name": "step",
+          "data_type": "varchar"
+        },
+        {
+          "name": "engine",
+          "data_type": "varchar"
+        },
+        {
+          "name": "attempts",
+          "data_type": "bigint"
+        },
+        {
+          "name": "started_at",
+          "data_type": "timestamp(6)"
+        },
+        {
+          "name": "duration_seconds",
+          "data_type": "double"
+        },
+        {
+          "name": "records_written",
+          "data_type": "bigint"
+        },
+        {
+          "name": "nodes",
+          "data_type": "bigint"
+        },
+        {
+          "name": "failed_nodes",
+          "data_type": "bigint"
+        },
+        {
+          "name": "status",
+          "data_type": "varchar"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [
+        "audit.dbt_node_run",
+        "audit.ingestion_run"
+      ],
+      "functions": {
+        "cast": 7,
+        "coalesce": 1,
+        "concat": 3,
+        "count": 2,
+        "count_if": 2,
+        "date_diff": 1,
+        "if": 2,
+        "lower": 1,
+        "max": 3,
+        "max_by": 4,
+        "min": 3,
+        "regexp_replace": 3,
+        "sum": 1
+      },
+      "macros": [],
+      "tests": 3,
+      "volume": {
+        "rows": 26,
+        "data_bytes": 3238,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "observability",
+      "name": "volume_check",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "business_date",
+          "data_type": "date"
+        },
+        {
+          "name": "dataset",
+          "data_type": "varchar"
+        },
+        {
+          "name": "record_count",
+          "data_type": "bigint"
+        },
+        {
+          "name": "baseline_days",
+          "data_type": "integer"
+        },
+        {
+          "name": "baseline_median",
+          "data_type": "double"
+        },
+        {
+          "name": "volume_ratio",
+          "data_type": "double"
+        },
+        {
+          "name": "min_ratio",
+          "data_type": "double"
+        },
+        {
+          "name": "max_ratio",
+          "data_type": "double"
+        },
+        {
+          "name": "is_blocking",
+          "data_type": "boolean"
+        },
+        {
+          "name": "status",
+          "data_type": "varchar"
+        },
+        {
+          "name": "acknowledgement",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "incremental",
+      "depends_on": [
+        "observability.dataset_profile",
+        "reference.acknowledged_anomaly"
+      ],
+      "functions": {
+        "array_agg": 1,
+        "array_sort": 1,
+        "cardinality": 2,
+        "cast": 8,
+        "coalesce": 1,
+        "count": 1,
+        "day_of_week": 2,
+        "exists": 1,
+        "if": 7,
+        "row_number": 1
+      },
+      "macros": [
+        "baseline_dates",
+        "business_date_filter",
+        "lineage_columns",
+        "replace_business_date"
+      ],
+      "tests": 7,
+      "volume": {
+        "rows": 54,
+        "data_bytes": 47797,
+        "data_files": 18
+      }
+    },
+    {
+      "schema": "reference",
+      "name": "acknowledged_anomaly",
+      "kind": "seed",
+      "columns": [
+        {
+          "name": "dataset",
+          "data_type": "varchar"
+        },
+        {
+          "name": "from_date",
+          "data_type": "date"
+        },
+        {
+          "name": "to_date",
+          "data_type": "date"
+        },
+        {
+          "name": "reason",
+          "data_type": "varchar"
+        },
+        {
+          "name": "acknowledged_by",
+          "data_type": "varchar"
+        },
+        {
+          "name": "acknowledged_on",
+          "data_type": "date"
+        }
+      ],
+      "materialization": "seed",
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 7,
+      "volume": {
+        "rows": 4,
+        "data_bytes": 1653,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "reference",
+      "name": "high_risk_jurisdiction",
+      "kind": "seed",
+      "columns": [
+        {
+          "name": "country_code",
+          "data_type": "varchar"
+        },
+        {
+          "name": "fatf_list",
+          "data_type": "varchar"
+        },
+        {
+          "name": "in_force_from",
+          "data_type": "date"
+        },
+        {
+          "name": "in_force_to",
+          "data_type": "date"
+        }
+      ],
+      "materialization": "seed",
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 4,
+      "volume": {
+        "rows": 25,
+        "data_bytes": 844,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "reference",
+      "name": "iso_currency",
+      "kind": "seed",
+      "columns": [
+        {
+          "name": "numeric_code",
+          "data_type": "varchar"
+        },
+        {
+          "name": "alpha_code",
+          "data_type": "varchar"
+        },
+        {
+          "name": "minor_unit",
+          "data_type": "integer"
+        }
+      ],
+      "materialization": "seed",
+      "depends_on": [],
+      "functions": {},
+      "macros": [],
+      "tests": 5,
+      "volume": {
+        "rows": 3,
+        "data_bytes": 526,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "restricted",
+      "name": "customer_identity",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "customer_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "first_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "last_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "legal_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "full_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "full_name_key",
+          "data_type": "varchar"
+        },
+        {
+          "name": "birth_date",
+          "data_type": "date"
+        },
+        {
+          "name": "id_document_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "id_document_number",
+          "data_type": "varchar"
+        },
+        {
+          "name": "id_document_key",
+          "data_type": "varchar"
+        },
+        {
+          "name": "tax_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "nationality",
+          "data_type": "varchar"
+        },
+        {
+          "name": "address_line",
+          "data_type": "varchar"
+        },
+        {
+          "name": "city",
+          "data_type": "varchar"
+        },
+        {
+          "name": "city_key",
+          "data_type": "varchar"
+        },
+        {
+          "name": "postal_code",
+          "data_type": "varchar"
+        },
+        {
+          "name": "phone",
+          "data_type": "varchar"
+        },
+        {
+          "name": "email",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [
+        "bronze.corebanking_customer"
+      ],
+      "functions": {
+        "cast": 2,
+        "coalesce": 1,
+        "concat_ws": 1,
+        "normalize": 2,
+        "nullif": 3,
+        "regexp_replace": 3,
+        "row_number": 1,
+        "upper": 3
+      },
+      "macros": [
+        "current_rows",
+        "document_key",
+        "lineage_columns",
+        "name_key"
+      ],
+      "tests": 3,
+      "volume": {
+        "rows": 167848,
+        "data_bytes": 5192388,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "silver",
+      "name": "account_history",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "account_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "bank_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "account_number",
+          "data_type": "varchar"
+        },
+        {
+          "name": "account_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "currency",
+          "data_type": "varchar"
+        },
+        {
+          "name": "status",
+          "data_type": "varchar"
+        },
+        {
+          "name": "opened_on",
+          "data_type": "date"
+        },
+        {
+          "name": "closed_on",
+          "data_type": "date"
+        },
+        {
+          "name": "valid_from",
+          "data_type": "date"
+        },
+        {
+          "name": "valid_to",
+          "data_type": "date"
+        },
+        {
+          "name": "is_current",
+          "data_type": "boolean"
+        },
+        {
+          "name": "recorded_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [
+        "audit.change_batch",
+        "bronze.corebanking_account"
+      ],
+      "functions": {
+        "cast": 4,
+        "coalesce": 1,
+        "lag": 19,
+        "lead": 1,
+        "max": 1,
+        "regexp_replace": 1,
+        "row_number": 1
+      },
+      "macros": [
+        "change_events",
+        "lineage_columns",
+        "normalize_bank_id",
+        "scd2_versions"
+      ],
+      "tests": 7,
+      "volume": {
+        "rows": 518581,
+        "data_bytes": 5843975,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "silver",
+      "name": "card_history",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "card_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "account_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "card_token",
+          "data_type": "varchar"
+        },
+        {
+          "name": "scheme",
+          "data_type": "varchar"
+        },
+        {
+          "name": "product",
+          "data_type": "varchar"
+        },
+        {
+          "name": "status",
+          "data_type": "varchar"
+        },
+        {
+          "name": "issued_on",
+          "data_type": "date"
+        },
+        {
+          "name": "expires_on",
+          "data_type": "date"
+        },
+        {
+          "name": "valid_from",
+          "data_type": "date"
+        },
+        {
+          "name": "valid_to",
+          "data_type": "date"
+        },
+        {
+          "name": "is_current",
+          "data_type": "boolean"
+        },
+        {
+          "name": "recorded_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [
+        "audit.change_batch",
+        "bronze.corebanking_card"
+      ],
+      "functions": {
+        "cast": 4,
+        "coalesce": 1,
+        "lag": 17,
+        "lead": 1,
+        "max": 1,
+        "row_number": 1
+      },
+      "macros": [
+        "change_events",
+        "lineage_columns",
+        "scd2_versions"
+      ],
+      "tests": 6,
+      "volume": {
+        "rows": 87451,
+        "data_bytes": 1248461,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "silver",
+      "name": "card_transaction",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "txn_ref",
+          "data_type": "varchar"
+        },
+        {
+          "name": "business_date",
+          "data_type": "date"
+        },
+        {
+          "name": "txn_local_at",
+          "data_type": "timestamp(6)"
+        },
+        {
+          "name": "txn_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "channel",
+          "data_type": "varchar"
+        },
+        {
+          "name": "card_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "account_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "card_token",
+          "data_type": "varchar"
+        },
+        {
+          "name": "mcc",
+          "data_type": "varchar"
+        },
+        {
+          "name": "merchant_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "merchant_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "merchant_city",
+          "data_type": "varchar"
+        },
+        {
+          "name": "merchant_country",
+          "data_type": "varchar"
+        },
+        {
+          "name": "currency",
+          "data_type": "varchar"
+        },
+        {
+          "name": "amount",
+          "data_type": "decimal(22,6)"
+        },
+        {
+          "name": "signed_amount",
+          "data_type": "decimal(22,6)"
+        },
+        {
+          "name": "response_code",
+          "data_type": "varchar"
+        },
+        {
+          "name": "is_approved",
+          "data_type": "boolean"
+        },
+        {
+          "name": "auth_code",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_source_file",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "incremental",
+      "depends_on": [
+        "bronze.card_transaction",
+        "reference.iso_currency",
+        "silver.card_history"
+      ],
+      "functions": {
+        "cast": 5,
+        "if": 1,
+        "power": 1
+      },
+      "macros": [
+        "business_date_filter",
+        "lineage_columns",
+        "replace_business_date"
+      ],
+      "tests": 5,
+      "volume": {
+        "rows": 1800000,
+        "data_bytes": 62402422,
+        "data_files": 18
+      }
+    },
+    {
+      "schema": "silver",
+      "name": "customer_history",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "customer_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "gender",
+          "data_type": "varchar"
+        },
+        {
+          "name": "birth_year",
+          "data_type": "bigint"
+        },
+        {
+          "name": "legal_form",
+          "data_type": "varchar"
+        },
+        {
+          "name": "incorporation_year",
+          "data_type": "bigint"
+        },
+        {
+          "name": "nationality",
+          "data_type": "varchar"
+        },
+        {
+          "name": "residence_country",
+          "data_type": "varchar"
+        },
+        {
+          "name": "city",
+          "data_type": "varchar"
+        },
+        {
+          "name": "occupation",
+          "data_type": "varchar"
+        },
+        {
+          "name": "risk_rating",
+          "data_type": "varchar"
+        },
+        {
+          "name": "is_pep",
+          "data_type": "boolean"
+        },
+        {
+          "name": "customer_since",
+          "data_type": "date"
+        },
+        {
+          "name": "valid_from",
+          "data_type": "date"
+        },
+        {
+          "name": "valid_to",
+          "data_type": "date"
+        },
+        {
+          "name": "is_current",
+          "data_type": "boolean"
+        },
+        {
+          "name": "recorded_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [
+        "audit.change_batch",
+        "bronze.corebanking_customer"
+      ],
+      "functions": {
+        "cast": 4,
+        "coalesce": 1,
+        "lag": 27,
+        "lead": 1,
+        "max": 1,
+        "row_number": 1,
+        "year": 2
+      },
+      "macros": [
+        "change_events",
+        "lineage_columns",
+        "scd2_versions"
+      ],
+      "tests": 10,
+      "volume": {
+        "rows": 167848,
+        "data_bytes": 1327838,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "silver",
+      "name": "customer_match",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "matched_customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "match_rules",
+          "data_type": "array(varchar)"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [
+        "restricted.customer_identity"
+      ],
+      "functions": {
+        "array_agg": 1,
+        "array_distinct": 1,
+        "array_sort": 1,
+        "cast": 4,
+        "date_trunc": 1,
+        "day": 4,
+        "greatest": 3,
+        "if": 3,
+        "least": 1,
+        "length": 4,
+        "levenshtein_distance": 2,
+        "month": 2
+      },
+      "macros": [
+        "lineage_columns",
+        "name_similarity"
+      ],
+      "tests": 5,
+      "volume": {
+        "rows": 1641,
+        "data_bytes": 8685,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "silver",
+      "name": "fx_rate",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "currency",
+          "data_type": "varchar"
+        },
+        {
+          "name": "rate_to_reporting",
+          "data_type": "double"
+        },
+        {
+          "name": "relative_spread",
+          "data_type": "double"
+        },
+        {
+          "name": "quotes",
+          "data_type": "bigint"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [
+        "silver.payment_transfer"
+      ],
+      "functions": {
+        "array_agg": 1,
+        "array_sort": 1,
+        "cardinality": 4,
+        "cast": 13
+      },
+      "macros": [
+        "lineage_columns"
+      ],
+      "tests": 4,
+      "volume": {
+        "rows": 15,
+        "data_bytes": 2711,
+        "data_files": 2
+      }
+    },
+    {
+      "schema": "silver",
+      "name": "party",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "party_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "customer_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "customer_ids",
+          "data_type": "array(bigint)"
+        },
+        {
+          "name": "customer_count",
+          "data_type": "bigint"
+        },
+        {
+          "name": "risk_rating",
+          "data_type": "varchar"
+        },
+        {
+          "name": "is_pep",
+          "data_type": "boolean"
+        },
+        {
+          "name": "customer_since",
+          "data_type": "date"
+        },
+        {
+          "name": "residence_countries",
+          "data_type": "array(varchar)"
+        },
+        {
+          "name": "account_count",
+          "data_type": "bigint"
+        },
+        {
+          "name": "active_account_count",
+          "data_type": "bigint"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [
+        "silver.account_history",
+        "silver.customer_history",
+        "silver.party_member"
+      ],
+      "functions": {
+        "array_agg": 2,
+        "array_distinct": 1,
+        "array_sort": 1,
+        "bool_or": 1,
+        "cast": 2,
+        "coalesce": 2,
+        "count": 2,
+        "count_if": 1,
+        "max": 3,
+        "max_by": 1,
+        "min": 1
+      },
+      "macros": [
+        "lineage_columns"
+      ],
+      "tests": 4,
+      "volume": {
+        "rows": 166207,
+        "data_bytes": 924335,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "silver",
+      "name": "party_member",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "party_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "party_size",
+          "data_type": "bigint"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [
+        "restricted.customer_identity",
+        "silver.customer_match"
+      ],
+      "functions": {
+        "cast": 2,
+        "coalesce": 4,
+        "count": 1,
+        "least": 4,
+        "min": 4
+      },
+      "macros": [
+        "lineage_columns"
+      ],
+      "tests": 5,
+      "volume": {
+        "rows": 167848,
+        "data_bytes": 435447,
+        "data_files": 1
+      }
+    },
+    {
+      "schema": "silver",
+      "name": "payment_transfer",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "transfer_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "business_date",
+          "data_type": "date"
+        },
+        {
+          "name": "booked_at",
+          "data_type": "timestamp(6)"
+        },
+        {
+          "name": "originator_bank_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "originator_account",
+          "data_type": "varchar"
+        },
+        {
+          "name": "originator_account_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "originator_customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "beneficiary_bank_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "beneficiary_account",
+          "data_type": "varchar"
+        },
+        {
+          "name": "beneficiary_account_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "beneficiary_customer_id",
+          "data_type": "bigint"
+        },
+        {
+          "name": "amount_paid",
+          "data_type": "decimal(22,6)"
+        },
+        {
+          "name": "payment_currency",
+          "data_type": "varchar"
+        },
+        {
+          "name": "amount_received",
+          "data_type": "decimal(22,6)"
+        },
+        {
+          "name": "receiving_currency",
+          "data_type": "varchar"
+        },
+        {
+          "name": "payment_format",
+          "data_type": "varchar"
+        },
+        {
+          "name": "is_cross_currency",
+          "data_type": "boolean"
+        },
+        {
+          "name": "is_same_customer",
+          "data_type": "boolean"
+        },
+        {
+          "name": "_source_file",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "incremental",
+      "depends_on": [
+        "bronze.payment_transfer",
+        "silver.account_history"
+      ],
+      "functions": {
+        "cast": 2,
+        "regexp_replace": 4
+      },
+      "macros": [
+        "business_date_filter",
+        "lineage_columns",
+        "normalize_bank_id",
+        "replace_business_date"
+      ],
+      "tests": 5,
+      "volume": {
+        "rows": 5078345,
+        "data_bytes": 149926942,
+        "data_files": 18
+      }
+    },
+    {
+      "schema": "silver",
+      "name": "sanctions_entry",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "list_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "entry_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "entry_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "primary_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "programs",
+          "data_type": "array(varchar)"
+        },
+        {
+          "name": "listed_on",
+          "data_type": "date"
+        },
+        {
+          "name": "nationalities",
+          "data_type": "array(varchar)"
+        },
+        {
+          "name": "list_published",
+          "data_type": "varchar"
+        },
+        {
+          "name": "retrieved_at",
+          "data_type": "timestamp(6) with time zone"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [
+        "bronze.sanctions_ofac_sdn_entry",
+        "bronze.sanctions_un_entity",
+        "bronze.sanctions_un_individual"
+      ],
+      "functions": {
+        "cast": 7,
+        "coalesce": 2,
+        "concat_ws": 2,
+        "date": 2,
+        "max": 3,
+        "substr": 2,
+        "transform": 1,
+        "upper": 1
+      },
+      "macros": [
+        "lineage_columns"
+      ],
+      "tests": 5,
+      "volume": {
+        "rows": 20572,
+        "data_bytes": 299309,
+        "data_files": 3
+      }
+    },
+    {
+      "schema": "silver",
+      "name": "sanctions_name",
+      "kind": "model",
+      "columns": [
+        {
+          "name": "list_name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "entry_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "entry_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "name",
+          "data_type": "varchar"
+        },
+        {
+          "name": "name_type",
+          "data_type": "varchar"
+        },
+        {
+          "name": "alias_quality",
+          "data_type": "varchar"
+        },
+        {
+          "name": "name_key",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_pipeline_run_id",
+          "data_type": "varchar"
+        },
+        {
+          "name": "_loaded_at",
+          "data_type": "timestamp(6)"
+        }
+      ],
+      "materialization": "table",
+      "depends_on": [
+        "bronze.sanctions_ofac_sdn_entry",
+        "bronze.sanctions_un_entity",
+        "bronze.sanctions_un_individual",
+        "silver.sanctions_entry"
+      ],
+      "functions": {
+        "cast": 4,
+        "concat_ws": 1,
+        "max": 3,
+        "normalize": 1,
+        "nullif": 4,
+        "regexp_replace": 1,
+        "trim": 1,
+        "unnest": 3,
+        "upper": 3
+      },
+      "macros": [
+        "lineage_columns",
+        "name_key"
+      ],
+      "tests": 3,
+      "volume": {
+        "rows": 47981,
+        "data_bytes": 1086658,
+        "data_files": 1
+      }
+    }
+  ],
+  "access_rules": [
+    {
+      "users": "trino|dbt",
+      "scope": "catalog",
+      "catalog": "corebanking",
+      "schema": null,
+      "allow": "read-only"
+    },
+    {
+      "users": ".*",
+      "scope": "catalog",
+      "catalog": "corebanking",
+      "schema": null,
+      "allow": "none"
+    },
+    {
+      "users": "trino|dbt|integration-test",
+      "scope": "catalog",
+      "catalog": null,
+      "schema": null,
+      "allow": "all"
+    },
+    {
+      "users": "compliance|analyst|bi",
+      "scope": "catalog",
+      "catalog": "lakehouse|system",
+      "schema": null,
+      "allow": "read-only"
+    },
+    {
+      "users": ".*",
+      "scope": "catalog",
+      "catalog": null,
+      "schema": null,
+      "allow": "none"
+    },
+    {
+      "users": "trino|dbt|integration-test",
+      "scope": "schema",
+      "catalog": null,
+      "schema": null,
+      "allow": "owner"
+    },
+    {
+      "users": ".*",
+      "scope": "schema",
+      "catalog": null,
+      "schema": null,
+      "allow": "not owner"
+    },
+    {
+      "users": "trino|dbt|integration-test",
+      "scope": "table",
+      "catalog": null,
+      "schema": null,
+      "allow": "SELECT, INSERT, DELETE, UPDATE, OWNERSHIP, GRANT_SELECT"
+    },
+    {
+      "users": "analyst|bi",
+      "scope": "table",
+      "catalog": "lakehouse",
+      "schema": "restricted",
+      "allow": "none"
+    },
+    {
+      "users": "analyst",
+      "scope": "table",
+      "catalog": "lakehouse",
+      "schema": "gold",
+      "allow": "none"
+    },
+    {
+      "users": "compliance|analyst|bi",
+      "scope": "table",
+      "catalog": "lakehouse|system",
+      "schema": null,
+      "allow": "SELECT"
+    },
+    {
+      "users": ".*",
+      "scope": "table",
+      "catalog": null,
+      "schema": null,
+      "allow": "none"
+    }
+  ],
+  "function_translations": {
+    "array_agg": [
+      "collect_list"
+    ],
+    "array_distinct": [
+      "array_distinct"
+    ],
+    "array_intersect": [
+      "array_intersect"
+    ],
+    "array_sort": [
+      "array_sort"
+    ],
+    "bool_or": [
+      "bool_or"
+    ],
+    "cardinality": [
+      "size"
+    ],
+    "cast": [
+      "cast"
+    ],
+    "coalesce": [
+      "coalesce"
+    ],
+    "concat": [
+      "concat"
+    ],
+    "concat_ws": [
+      "concat_ws"
+    ],
+    "count": [
+      "count"
+    ],
+    "count_if": [
+      "count_if"
+    ],
+    "date": [
+      "date"
+    ],
+    "date_diff": [
+      "datediff"
+    ],
+    "date_trunc": [
+      "date_trunc"
+    ],
+    "day": [
+      "day"
+    ],
+    "day_of_week": [
+      null
+    ],
+    "exists": [
+      "exists"
+    ],
+    "filter": [
+      "filter"
+    ],
+    "greatest": [
+      "greatest"
+    ],
+    "if": [
+      "if"
+    ],
+    "lag": [
+      "lag"
+    ],
+    "lead": [
+      "lead"
+    ],
+    "least": [
+      "least"
+    ],
+    "length": [
+      "length"
+    ],
+    "levenshtein_distance": [
+      "levenshtein"
+    ],
+    "ln": [
+      "ln"
+    ],
+    "lower": [
+      "lower"
+    ],
+    "max": [
+      "max"
+    ],
+    "max_by": [
+      "max_by"
+    ],
+    "md5": [
+      "unhex"
+    ],
+    "min": [
+      "min"
+    ],
+    "month": [
+      "month"
+    ],
+    "normalize": [
+      "normalize"
+    ],
+    "nullif": [
+      "nullif"
+    ],
+    "power": [
+      "power"
+    ],
+    "regexp_extract_all": [
+      "regexp_extract_all"
+    ],
+    "regexp_replace": [
+      "regexp_replace"
+    ],
+    "round": [
+      "round"
+    ],
+    "row_number": [
+      "row_number"
+    ],
+    "substr": [
+      "substring"
+    ],
+    "sum": [
+      "sum"
+    ],
+    "to_utf8": [
+      "encode"
+    ],
+    "transform": [
+      "transform"
+    ],
+    "trim": [
+      "trim"
+    ],
+    "unnest": [
+      "explode"
+    ],
+    "upper": [
+      "upper"
+    ],
+    "year": [
+      "year"
+    ]
+  }
+}

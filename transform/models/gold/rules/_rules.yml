@@ -1,0 +1,85 @@
+unit_tests:
+  - name: pass_through_forwards_most_of_a_recent_credit_to_a_third_party
+    description: >
+      Account 1 forwards 95% of a credit from 2 to 3 within the window. Paying back the
+      sender, keeping too much, forwarding more than received or after the window does not fire.
+    model: rule_pass_through
+    overrides:
+      vars:
+        business_date: "2022-09-05"
+    given:
+      - input: ref('monitored_transfer')
+        format: sql
+        rows: |
+          select * from (values
+            ('C1', date '2022-09-04', timestamp_ntz '2022-09-04 10:00:00.000000', 2, 1, 'ACH', cast(1000 as decimal(22, 2))),
+            ('D1', date '2022-09-05', timestamp_ntz '2022-09-05 09:00:00.000000', 1, 3, 'ACH', cast(950 as decimal(22, 2))),
+            ('D2', date '2022-09-05', timestamp_ntz '2022-09-05 09:30:00.000000', 1, 2, 'ACH', cast(990 as decimal(22, 2))),
+            ('D3', date '2022-09-05', timestamp_ntz '2022-09-05 10:00:00.000000', 1, 4, 'ACH', cast(500 as decimal(22, 2))),
+            ('D4', date '2022-09-05', timestamp_ntz '2022-09-05 11:00:00.000000', 1, 5, 'ACH', cast(1001 as decimal(22, 2))),
+            ('C2', date '2022-09-01', timestamp_ntz '2022-09-01 08:00:00.000000', 6, 7, 'ACH', cast(800 as decimal(22, 2))),
+            ('D5', date '2022-09-05', timestamp_ntz '2022-09-05 08:00:00.000000', 7, 8, 'ACH', cast(800 as decimal(22, 2))),
+            ('C3', date '2022-09-05', timestamp_ntz '2022-09-05 06:00:00.000000', 9, 10, 'CHEQUE', cast(700 as decimal(22, 2))),
+            ('D6', date '2022-09-05', timestamp_ntz '2022-09-05 07:00:00.000000', 10, 11, 'ACH', cast(700 as decimal(22, 2)))
+          ) as transfers (transfer_id, business_date, booked_at, originator_account_id, beneficiary_account_id, payment_format, amount)
+    expect:
+      rows:
+        - {rule_id: AML-003, business_date: 2022-09-05, account_id: 1, transfer_id: C1, evidence_role: CREDIT}
+        - {rule_id: AML-003, business_date: 2022-09-05, account_id: 1, transfer_id: D1, evidence_role: DEBIT}
+
+  - name: round_trip_returns_funds_to_their_sender
+    description: >
+      Account 1 pays 2, which pays 1 back within the window. A payment back after the window,
+      or to another account, does not fire.
+    model: rule_round_trip
+    overrides:
+      vars:
+        business_date: "2022-09-05"
+    given:
+      - input: ref('monitored_transfer')
+        format: sql
+        rows: |
+          select * from (values
+            ('O1', date '2022-09-03', timestamp_ntz '2022-09-03 12:00:00.000000', 1, 2, 'WIRE', cast(5000 as decimal(22, 2))),
+            ('R1', date '2022-09-05', timestamp_ntz '2022-09-05 11:00:00.000000', 2, 1, 'ACH', cast(4900 as decimal(22, 2))),
+            ('O2', date '2022-09-01', timestamp_ntz '2022-09-01 12:00:00.000000', 3, 4, 'ACH', cast(100 as decimal(22, 2))),
+            ('R2', date '2022-09-05', timestamp_ntz '2022-09-05 12:00:01.000000', 4, 3, 'ACH', cast(100 as decimal(22, 2))),
+            ('R3', date '2022-09-05', timestamp_ntz '2022-09-05 13:00:00.000000', 2, 5, 'ACH', cast(100 as decimal(22, 2)))
+          ) as transfers (transfer_id, business_date, booked_at, originator_account_id, beneficiary_account_id, payment_format, amount)
+    expect:
+      rows:
+        - {rule_id: AML-004, business_date: 2022-09-05, account_id: 1, transfer_id: O1, evidence_role: DEBIT}
+        - {rule_id: AML-004, business_date: 2022-09-05, account_id: 1, transfer_id: R1, evidence_role: CREDIT}
+
+  - name: volume_spike_compares_with_the_average_including_quiet_days
+    description: >
+      Account 1 paid 700 over two days of the previous week (100 a day on average) and pays
+      1000 + 9000 today. Account 2 pays as much as usual, account 3 has no history, account 4
+      a single active day, account 5 stays under the minimum amount.
+    model: rule_volume_spike
+    overrides:
+      vars:
+        business_date: "2022-09-08"
+    given:
+      - input: ref('monitored_transfer')
+        format: sql
+        rows: |
+          select * from (values
+            ('H0', date '2022-09-01', timestamp_ntz '2022-09-01 10:00:00.000000', 1, 9, 'ACH', cast(300 as decimal(22, 2))),
+            ('H1', date '2022-09-02', timestamp_ntz '2022-09-02 10:00:00.000000', 1, 9, 'ACH', cast(400 as decimal(22, 2))),
+            ('T1', date '2022-09-08', timestamp_ntz '2022-09-08 10:00:00.000000', 1, 9, 'ACH', cast(1000 as decimal(22, 2))),
+            ('T2', date '2022-09-08', timestamp_ntz '2022-09-08 11:00:00.000000', 1, 8, 'WIRE', cast(9000 as decimal(22, 2))),
+            ('H2', date '2022-09-06', timestamp_ntz '2022-09-06 10:00:00.000000', 2, 9, 'ACH', cast(20000 as decimal(22, 2))),
+            ('H3', date '2022-09-07', timestamp_ntz '2022-09-07 10:00:00.000000', 2, 9, 'ACH', cast(20000 as decimal(22, 2))),
+            ('T3', date '2022-09-08', timestamp_ntz '2022-09-08 10:00:00.000000', 2, 9, 'ACH', cast(20000 as decimal(22, 2))),
+            ('T6', date '2022-09-08', timestamp_ntz '2022-09-08 10:00:00.000000', 3, 9, 'ACH', cast(50000 as decimal(22, 2))),
+            ('H4', date '2022-09-06', timestamp_ntz '2022-09-06 10:00:00.000000', 4, 9, 'ACH', cast(1 as decimal(22, 2))),
+            ('T4', date '2022-09-08', timestamp_ntz '2022-09-08 10:00:00.000000', 4, 9, 'ACH', cast(50000 as decimal(22, 2))),
+            ('H5', date '2022-09-05', timestamp_ntz '2022-09-05 10:00:00.000000', 5, 9, 'ACH', cast(1 as decimal(22, 2))),
+            ('H6', date '2022-09-06', timestamp_ntz '2022-09-06 10:00:00.000000', 5, 9, 'ACH', cast(1 as decimal(22, 2))),
+            ('T5', date '2022-09-08', timestamp_ntz '2022-09-08 10:00:00.000000', 5, 9, 'ACH', cast(9999 as decimal(22, 2)))
+          ) as transfers (transfer_id, business_date, booked_at, originator_account_id, beneficiary_account_id, payment_format, amount)
+    expect:
+      rows:
+        - {rule_id: AML-005, business_date: 2022-09-08, account_id: 1, transfer_id: T1, evidence_role: DEBIT}
+        - {rule_id: AML-005, business_date: 2022-09-08, account_id: 1, transfer_id: T2, evidence_role: DEBIT}

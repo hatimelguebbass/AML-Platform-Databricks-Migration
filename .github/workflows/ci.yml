@@ -1,0 +1,130 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Prod exists only within an Azure window (ADR 0007): it is deployed, or its bundle destroyed, on demand.
+  workflow_dispatch:
+    inputs:
+      prod:
+        description: Deploy the branch to prod, or destroy prod's bundle before its infrastructure
+        type: choice
+        options: [deploy, destroy]
+        default: deploy
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          enable-cache: true
+      - uses: ./.github/actions/setup-databricks-cli
+      - run: uv sync --locked --all-extras
+      - run: make lint
+      - run: make typecheck
+      - run: make test-unit
+        env:
+          REQUIRE_DATABRICKS_CLI: "1"
+      - name: Assessment documents match the committed migration files
+        run: make assessment-check
+      - run: make dbt-parse
+      - run: make dbt-selectors
+
+  infra:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup-terraform
+      - run: make infra-check
+
+  # Deploys the branch to the dev workspace (Databricks Free Edition) and proves it usable.
+  # One dev workspace: deployments are serialized across branches, never cancelled midway.
+  dev:
+    needs: checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: dev
+    concurrency:
+      group: databricks-dev
+      cancel-in-progress: false
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          enable-cache: true
+      - uses: ./.github/actions/setup-databricks-cli
+      - run: uv sync --locked --all-extras
+      - run: make validate
+      - run: make catalog
+      # Schema grants name the account groups, which must exist before the deployment.
+      - run: make groups
+      # A plan that drops or recreates a schema or volume stops here for review: never auto-approved.
+      - run: make deploy
+      - run: make platform-check
+      - run: make transfer-check
+      # The daily job of the latest business date: ingests what landed since the last run, then audits,
+      # builds and publishes that date. Rerunning a published date changes nothing but its run id.
+      - run: make daily DATE=2022-09-18
+
+  # Deploys to the prod workspace on Azure (ADR 0007) after dev proved the same commit, or destroys
+  # what the bundle deployed there, as the identity that owns it. GitHub's OIDC token for the prod
+  # environment is exchanged for the deployer service principal's Entra token: no credential is
+  # stored. The Azure infrastructure itself is applied and destroyed by the operator, not here.
+  prod:
+    needs: [checks, infra, dev]
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: prod
+    concurrency:
+      group: databricks-prod
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_AUTH_TYPE: github-oidc-azure
+      ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
+      BUNDLE_VAR_alert_recipient: ${{ vars.ALERT_RECIPIENT }}
+      BUNDLE_VAR_landing_location: ${{ vars.LANDING_LOCATION }}
+      BUNDLE_VAR_deployer: ${{ vars.ARM_CLIENT_ID }}
+      TARGET: prod
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          enable-cache: true
+      - uses: ./.github/actions/setup-databricks-cli
+      - run: uv sync --locked --all-extras
+      # Values pasted into the settings page can carry a line break, which the CLI rejects in a URL.
+      - name: Environment variables of prod are set
+        run: |
+          for name in DATABRICKS_HOST ARM_CLIENT_ID ARM_TENANT_ID BUNDLE_VAR_alert_recipient BUNDLE_VAR_landing_location BUNDLE_VAR_deployer; do
+            value=$(printf '%s' "${!name}" | tr -d '[:space:]')
+            test -n "$value" || { echo "::error::$name is empty: set it in the prod environment's variables"; exit 1; }
+            echo "$name=$value" >> "$GITHUB_ENV"
+          done
+      - run: make validate
+      - if: inputs.prod == 'deploy'
+        run: make deploy platform-check transfer-check
+      # Drops the schemas with their tables and volumes, and the jobs, so that the catalog Terraform
+      # destroys next is empty: Unity Catalog refuses to drop a catalog that still holds schemas.
+      - if: inputs.prod == 'destroy'
+        run: make destroy

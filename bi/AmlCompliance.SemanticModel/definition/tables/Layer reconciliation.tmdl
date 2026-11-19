@@ -1,0 +1,75 @@
+/// Records and control totals of each dated feed, landed, in bronze and in silver (observability.layer_reconciliation).
+table 'Layer reconciliation'
+	lineageTag: 6bdad3d5-fb7c-5f6b-bd67-50049aa4cfd5
+
+	measure 'Unreconciled feeds' = CALCULATE ( COUNTROWS ( 'Layer reconciliation' ), 'Layer reconciliation'[Is reconciled] = FALSE () )
+		formatString: #,0
+		lineageTag: 0e2e4cd1-7741-52b0-8e95-fe280ac6bf87
+
+	column 'Business date'
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 16ff6d6a-5bac-559b-ba8e-e82b24d67fe4
+		summarizeBy: none
+		sourceColumn: business_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Feed
+		dataType: string
+		lineageTag: e83c56df-5869-5040-b818-4a837b8a0678
+		summarizeBy: none
+		sourceColumn: feed
+
+	column 'Landed records'
+		dataType: int64
+		formatString: #,0
+		lineageTag: d4bb4f66-db91-582c-ba32-1be25ac4d74c
+		summarizeBy: none
+		sourceColumn: landed_records
+
+	column 'Bronze records'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 3d21e9fd-325e-5f10-97b9-5c055c72e77d
+		summarizeBy: none
+		sourceColumn: bronze_records
+
+	column 'Silver records'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 922796d5-d3c8-5083-979b-4c2620c2b60c
+		summarizeBy: none
+		sourceColumn: silver_records
+
+	column 'Bronze amount'
+		dataType: decimal
+		formatString: #,0.00
+		lineageTag: e05aacc2-8f12-5e86-b0ab-fb7f225d3e0f
+		summarizeBy: none
+		sourceColumn: bronze_amount
+
+	column 'Silver amount'
+		dataType: decimal
+		formatString: #,0.00
+		lineageTag: 2787bf1b-9943-5e2c-8335-496e1a9e27cf
+		summarizeBy: none
+		sourceColumn: silver_amount
+
+	column 'Is reconciled'
+		dataType: boolean
+		lineageTag: c2a8655e-c80e-5ee0-9217-093e0a3cf2c3
+		summarizeBy: none
+		sourceColumn: is_reconciled
+
+	partition 'Layer reconciliation' = m
+		mode: import
+		source =
+				let
+				    Source = Lakehouse{[Name = "observability", Kind = "Schema"]}[Data]{[Name = "layer_reconciliation", Kind = "Table"]}[Data],
+				    Columns = Table.SelectColumns(Source, {"business_date", "feed", "landed_records", "bronze_records", "silver_records", "bronze_amount", "silver_amount", "is_reconciled"}),
+				    Typed = Table.TransformColumnTypes(Columns, {{"business_date", type date}, {"feed", type text}, {"landed_records", Int64.Type}, {"bronze_records", Int64.Type}, {"silver_records", Int64.Type}, {"bronze_amount", Currency.Type}, {"silver_amount", Currency.Type}, {"is_reconciled", type logical}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

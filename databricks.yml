@@ -1,0 +1,78 @@
+# Lakehouse on Databricks: catalog, schemas, volumes and jobs of one environment per target.
+# Infrastructure outside the workspace (storage account, workspace, identities) is Terraform's.
+bundle:
+  name: aml-lakehouse
+  engine: direct
+  databricks_cli_version: "1.26.0"
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog catalog of the environment.
+  warehouse_id:
+    description: SQL warehouse that runs the dbt transformations.
+  alert_recipient:
+    description: Mailbox told when the daily job fails or runs too long.
+    default: ${workspace.current_user.userName}
+  deployer:
+    description: Application id of the service principal that deploys prod (Terraform output deployer_client_id); prod only.
+    default: ""
+  landing_location:
+    description: URL of the landing external location (Terraform output landing_location); prod only.
+    default: ""
+  serverless_environment_version:
+    description: Serverless environment of the Python tasks (Python 3.12 from version 3 on).
+    default: "4"
+
+artifacts:
+  lakemig:
+    type: whl
+    build: uv build --wheel
+    path: .
+
+targets:
+  dev:
+    # Databricks Free Edition: serverless only, default storage, one workspace. Not in development
+    # mode: it prefixes schema names per user even with an empty name_prefix preset, and the schema
+    # names are the contract every later step relies on; the catalog isolates the environment.
+    default: true
+    presets:
+      trigger_pause_status: PAUSED
+    variables:
+      catalog: aml_dev
+      warehouse_id:
+        lookup:
+          warehouse: Serverless Starter Warehouse
+
+  # Azure Databricks serverless workspace (infra/terraform/prod, ADR 0007). CI deploys as the
+  # deployer service principal, which therefore owns and runs the jobs.
+  prod:
+    mode: production
+    workspace:
+      # Only the deployer service principal deploys prod, so its home holds the single copy.
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: aml_prod
+      warehouse_id:
+        lookup:
+          warehouse: aml-prod
+      # A service principal has no mailbox: CI passes BUNDLE_VAR_alert_recipient.
+      alert_recipient: ""
+    permissions:
+      - group_name: data-platform-admins
+        level: CAN_MANAGE
+      # The deployer owns what it deploys; stated so that the permissions are the bundle's alone.
+      - service_principal_name: ${var.deployer}
+        level: CAN_MANAGE
+    resources:
+      volumes:
+        # The deliveries stay in the account's own storage, outside the catalog's managed location:
+        # an external volume on the landing external location (BUNDLE_VAR_landing_location).
+        deliveries:
+          catalog_name: ${var.catalog}
+          schema_name: landing
+          name: deliveries
+          volume_type: EXTERNAL
+          storage_location: ${var.landing_location}deliveries

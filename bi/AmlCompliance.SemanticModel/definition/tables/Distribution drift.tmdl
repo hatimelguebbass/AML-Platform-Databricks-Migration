@@ -1,0 +1,68 @@
+/// Population stability index of each profiled dimension (observability.distribution_drift).
+table 'Distribution drift'
+	lineageTag: 670418bb-40f8-5f8c-abc0-f5274c10b996
+
+	measure 'Drifting dimensions' = CALCULATE ( COUNTROWS ( 'Distribution drift' ), 'Distribution drift'[Status] = "DRIFT" )
+		formatString: #,0
+		lineageTag: 6e4fb3d7-bf33-5071-ad5e-97caac4a0029
+
+	column 'Business date'
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: ec83a2f0-d50b-51a6-ad6d-bf6d33c57a5f
+		summarizeBy: none
+		sourceColumn: business_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Dataset
+		dataType: string
+		lineageTag: 0e6d088b-6de5-560a-a575-c4a42ba0615a
+		summarizeBy: none
+		sourceColumn: dataset
+
+	column Dimension
+		dataType: string
+		lineageTag: a5a4e9cb-9f82-5362-8789-5a7e8daec1f8
+		summarizeBy: none
+		sourceColumn: dimension
+
+	column Bins
+		dataType: int64
+		formatString: 0
+		lineageTag: 4fc144e3-ea8b-5bff-aabb-b286ca5b0237
+		summarizeBy: none
+		sourceColumn: bins
+
+	column 'Baseline days'
+		dataType: int64
+		formatString: 0
+		lineageTag: 490f789f-0773-501f-aaca-4817ea96e4ab
+		summarizeBy: none
+		sourceColumn: baseline_days
+
+	column 'Stability index'
+		dataType: double
+		formatString: 0.000
+		lineageTag: 3ec7fa7d-822a-52f2-888f-fa047b3a9e41
+		summarizeBy: none
+		sourceColumn: stability_index
+
+	/// STABLE, SHIFT, DRIFT, EMPTY, NO_BASELINE or ACKNOWLEDGED.
+	column Status
+		dataType: string
+		lineageTag: 56431e51-4a3d-5f8f-b9d2-25f3ab9cbc67
+		summarizeBy: none
+		sourceColumn: status
+
+	partition 'Distribution drift' = m
+		mode: import
+		source =
+				let
+				    Source = Lakehouse{[Name = "observability", Kind = "Schema"]}[Data]{[Name = "distribution_drift", Kind = "Table"]}[Data],
+				    Columns = Table.SelectColumns(Source, {"business_date", "dataset", "dimension", "bins", "baseline_days", "stability_index", "status"}),
+				    Typed = Table.TransformColumnTypes(Columns, {{"business_date", type date}, {"dataset", type text}, {"dimension", type text}, {"bins", Int64.Type}, {"baseline_days", Int64.Type}, {"stability_index", type number}, {"status", type text}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

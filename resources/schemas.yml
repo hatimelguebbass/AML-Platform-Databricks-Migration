@@ -1,0 +1,122 @@
+# The catalog itself is created outside the bundle: on Free Edition, catalogs on the workspace's
+# default storage can only be created with SQL (make catalog); in prod, Terraform creates it on its
+# ADLS external location (step 6). A bundle destroy therefore never drops a catalog.
+#
+# Read access goes to groups, never to people, schema by schema (ADR 0005). The groups are account
+# groups: on Free Edition `make groups` creates them, in prod Terraform does (step 6). Those who
+# build the tables own them; no group reads bronze or the landed files.
+resources:
+  schemas:
+    landing:
+      catalog_name: ${var.catalog}
+      name: landing
+      comment: Exports received from the on-premises platform, as delivered (step 2).
+      # The delivery log holds ids, dates and key ids, no row of data: the operators read it to
+      # check custody of the key and what was accepted before a cutover (ADR 0010).
+      grants:
+        - principal: aml-migration
+          privileges: [USE_SCHEMA, SELECT]
+    bronze:
+      catalog_name: ${var.catalog}
+      name: bronze
+      comment: Exports ingested as Delta tables, checked against their manifests.
+    silver:
+      catalog_name: ${var.catalog}
+      name: silver
+      comment: Cleaned and conformed transactions and customer reference, without direct identifiers.
+      grants:
+        - principal: aml-migration
+          privileges: [USE_SCHEMA, SELECT]
+        - principal: aml-compliance
+          privileges: [USE_SCHEMA, SELECT]
+        - principal: aml-analysts
+          privileges: [USE_SCHEMA, SELECT]
+        - principal: aml-reporting
+          privileges: [USE_SCHEMA, SELECT]
+    gold:
+      catalog_name: ${var.catalog}
+      name: gold
+      comment: AML rule alerts, their evidence and the rule catalogue.
+      # Alerts are what an investigation starts from: analysts never read them, as on the source.
+      grants:
+        - principal: aml-compliance
+          privileges: [USE_SCHEMA, SELECT]
+        - principal: aml-reporting
+          privileges: [USE_SCHEMA, SELECT]
+        - principal: aml-migration
+          privileges: [USE_SCHEMA, SELECT]
+    reference:
+      catalog_name: ${var.catalog}
+      name: reference
+      comment: Reference lists versioned with the transformations (currencies, FATF jurisdictions).
+      grants:
+        - principal: aml-compliance
+          privileges: [USE_SCHEMA, SELECT]
+        - principal: aml-analysts
+          privileges: [USE_SCHEMA, SELECT]
+        - principal: aml-reporting
+          privileges: [USE_SCHEMA, SELECT]
+    # Staging copies of the layers above (ADR 0006): dbt builds and tests them, the publication
+    # copies them once audited. Unaudited rows: no group reads them.
+    reference_staging:
+      catalog_name: ${var.catalog}
+      name: reference_staging
+      comment: Staging copy of reference, built by dbt and published after the audits.
+    silver_staging:
+      catalog_name: ${var.catalog}
+      name: silver_staging
+      comment: Staging copy of silver, built by dbt and published after the audits.
+    gold_staging:
+      catalog_name: ${var.catalog}
+      name: gold_staging
+      comment: Staging copy of gold, built by dbt and published after the audits.
+    observability_staging:
+      catalog_name: ${var.catalog}
+      name: observability_staging
+      comment: Staging copy of observability, built by dbt and published after the audits.
+    governance:
+      catalog_name: ${var.catalog}
+      name: governance
+      comment: Policy functions of the column masks, created by the transformations.
+      # The parity run calls the mask once to prove it reads pseudonyms, not nulls, before comparing.
+      grants:
+        - principal: aml-migration
+          privileges: [USE_SCHEMA, EXECUTE]
+    observability:
+      catalog_name: ${var.catalog}
+      name: observability
+      comment: Volume, drift and reconciliation checks of each business date, and the publication log.
+      # Readers of the source's lakehouse read its checks; the parity run reads which run published each date.
+      grants:
+        - principal: aml-migration
+          privileges: [USE_SCHEMA, SELECT]
+        - principal: aml-compliance
+          privileges: [USE_SCHEMA, SELECT]
+        - principal: aml-analysts
+          privileges: [USE_SCHEMA, SELECT]
+        - principal: aml-reporting
+          privileges: [USE_SCHEMA, SELECT]
+    migration:
+      catalog_name: ${var.catalog}
+      name: migration
+      comment: Platform checks and the parity reports of the parallel run.
+
+  volumes:
+    deliveries:
+      catalog_name: ${var.catalog}
+      schema_name: ${resources.schemas.landing.name}
+      name: deliveries
+      volume_type: MANAGED
+      comment: >-
+        Deliveries of the on-premises export: <business_date>/<delivery_id>/<table>/part-00000.parquet,
+        sealed by <business_date>/<delivery_id>/_manifest.json, which is written last.
+      # The on-premises export uploads; reading lets it check what is already delivered.
+      grants:
+        - principal: aml-migration
+          privileges: [READ_VOLUME, WRITE_VOLUME]
+    transfer_checks:
+      catalog_name: ${var.catalog}
+      schema_name: ${resources.schemas.migration.name}
+      name: transfer_checks
+      volume_type: MANAGED
+      comment: Scratch space of the transfer integration tests, emptied by each test.

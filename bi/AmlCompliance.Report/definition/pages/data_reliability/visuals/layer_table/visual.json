@@ -1,0 +1,142 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "layer_table",
+  "position": {
+    "x": 800,
+    "y": 376,
+    "z": 11000,
+    "height": 328,
+    "width": 456,
+    "tabOrder": 11000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Layer reconciliation"
+                    }
+                  },
+                  "Property": "Business date"
+                }
+              },
+              "queryRef": "Layer reconciliation.Business date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Layer reconciliation"
+                    }
+                  },
+                  "Property": "Feed"
+                }
+              },
+              "queryRef": "Layer reconciliation.Feed"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Layer reconciliation"
+                    }
+                  },
+                  "Property": "Landed records"
+                }
+              },
+              "queryRef": "Layer reconciliation.Landed records"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Layer reconciliation"
+                    }
+                  },
+                  "Property": "Bronze records"
+                }
+              },
+              "queryRef": "Layer reconciliation.Bronze records"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Layer reconciliation"
+                    }
+                  },
+                  "Property": "Silver records"
+                }
+              },
+              "queryRef": "Layer reconciliation.Silver records"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Layer reconciliation"
+                    }
+                  },
+                  "Property": "Is reconciled"
+                }
+              },
+              "queryRef": "Layer reconciliation.Is reconciled"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Layer reconciliation"
+                  }
+                },
+                "Property": "Business date"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Files, bronze and silver'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

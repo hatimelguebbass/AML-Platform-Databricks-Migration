@@ -1,0 +1,23 @@
+relationship b376edb9-55c4-554b-b370-d44044428f67
+	fromColumn: Alert.'Rule ID'
+	toColumn: Rule.'Rule ID'
+
+relationship c5a43232-c733-5e65-968a-4a3f90118712
+	fromColumn: Alert.'Business date'
+	toColumn: Date.Date
+
+relationship 671fc50e-7126-5a2b-9ac1-17e443dabc8f
+	fromColumn: 'Alert evidence'.'Alert ID'
+	toColumn: Alert.'Alert ID'
+
+relationship 7e263f87-b76e-54bc-8f52-377c3df7bda8
+	fromColumn: 'Volume check'.'Business date'
+	toColumn: Date.Date
+
+relationship c7de73ab-8125-5cbf-a07d-71c1be11c633
+	fromColumn: 'Distribution drift'.'Business date'
+	toColumn: Date.Date
+
+relationship a646435d-2895-5b09-a8f1-d2b31a100207
+	fromColumn: 'Layer reconciliation'.'Business date'
+	toColumn: Date.Date

@@ -1,0 +1,75 @@
+# What the parallel run compares and what it accepts (ADR 0008). `make parity` runs it on premises,
+# next to the source; `lakemig assess` checks this file against the transformation project and the
+# last report, `docs/assessment/parity.md` renders that report.
+#
+# Every column of both sides must be accounted for: compared (the default), written by each platform
+# about its own run (`lineage`), or kept on premises with a reason (`on_premises`). Columns are
+# compared on their canonical text (src/lakemig/parity/canonical.py): exact for every type, except a
+# double with a `tolerance`, its largest accepted absolute difference.
+#
+# `pseudonymize` names the source columns whose clear values the export replaced by pseudonyms
+# (migration/export.yaml), with their namespace: the run pseudonymizes them with the same key before
+# comparing. `slice` compares each published business date on its own.
+
+lineage:
+  - _pipeline_run_id
+  - _loaded_at
+  - _delivery_id
+
+# The alerts and the sanctions hits are what an investigation starts from: no tolerance is accepted.
+zero_difference:
+  - gold.aml_rule
+  - gold.aml_alert
+  - gold.aml_alert_transfer
+  - gold.sanctions_hit
+
+tables:
+  silver.customer_history:
+    key: [customer_id, valid_from]
+
+  silver.account_history:
+    key: [account_id, valid_from]
+    pseudonymize: {account_number: account_number}
+
+  silver.card_history:
+    key: [card_id, valid_from]
+    pseudonymize: {card_token: card_token}
+
+  silver.party_member:
+    key: [customer_id]
+
+  silver.party:
+    key: [party_id]
+
+  silver.fx_rate:
+    key: [currency]
+    # Rates are medians and spreads of quotes computed in floating point by each engine.
+    tolerance: {rate_to_reporting: 1.0e-12, relative_spread: 1.0e-12}
+
+  silver.payment_transfer:
+    key: [transfer_id]
+    slice: business_date
+    pseudonymize: {originator_account: account_number, beneficiary_account: account_number}
+
+  silver.card_transaction:
+    key: [txn_ref]
+    slice: business_date
+    pseudonymize: {card_token: card_token}
+
+  gold.aml_rule:
+    key: [rule_id]
+
+  gold.aml_alert:
+    key: [alert_id]
+    slice: business_date
+
+  gold.aml_alert_transfer:
+    key: [alert_id, transfer_id]
+    slice: business_date
+
+  gold.sanctions_hit:
+    key: [hit_id]
+    on_premises:
+      listed_name: >-
+        The sanctioned name that matched, compared with the customer's name on premises; names never
+        cross (ADR 0003), the hit carries the list entry instead.

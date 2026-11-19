@@ -1,0 +1,155 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "volume_table",
+  "position": {
+    "x": 24,
+    "y": 200,
+    "z": 9000,
+    "height": 252,
+    "width": 760,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Volume check"
+                    }
+                  },
+                  "Property": "Business date"
+                }
+              },
+              "queryRef": "Volume check.Business date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Volume check"
+                    }
+                  },
+                  "Property": "Dataset"
+                }
+              },
+              "queryRef": "Volume check.Dataset"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Volume check"
+                    }
+                  },
+                  "Property": "Records"
+                }
+              },
+              "queryRef": "Volume check.Records"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Volume check"
+                    }
+                  },
+                  "Property": "Baseline median"
+                }
+              },
+              "queryRef": "Volume check.Baseline median"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Volume check"
+                    }
+                  },
+                  "Property": "Volume ratio"
+                }
+              },
+              "queryRef": "Volume check.Volume ratio"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Volume check"
+                    }
+                  },
+                  "Property": "Status"
+                }
+              },
+              "queryRef": "Volume check.Status"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Volume check"
+                    }
+                  },
+                  "Property": "Acknowledgement"
+                }
+              },
+              "queryRef": "Volume check.Acknowledgement"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Volume check"
+                  }
+                },
+                "Property": "Business date"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Volume checks'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

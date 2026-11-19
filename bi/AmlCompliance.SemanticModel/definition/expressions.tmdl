@@ -1,0 +1,63 @@
+/// Platform the published lakehouse is read from: Databricks since the cutover, Trino to roll back (docs/cutover.md).
+expression ServingPlatform = "Databricks" meta [IsParameterQuery = true, List = {"Databricks", "Trino"}, DefaultValue = "Databricks", Type = "Text", IsParameterQueryRequired = true]
+	lineageTag: 7b778dd5-95c7-5f9e-8abc-4e594d0383cf
+
+	annotation PBI_ResultType = Text
+
+/// Server hostname of the SQL warehouse.
+expression DatabricksHost = "adb-7405607841387524.4.azuredatabricks.net" meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]
+	lineageTag: 0bbf2c7f-6f46-5ccb-b8fe-64189424d9df
+
+	annotation PBI_ResultType = Text
+
+/// HTTP path of the SQL warehouse.
+expression DatabricksHttpPath = "/sql/1.0/warehouses/212026821c3247f7" meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]
+	lineageTag: e85a8eea-145f-5b5e-ad9d-7143cc0cec87
+
+	annotation PBI_ResultType = Text
+
+/// Unity Catalog catalog of the platform.
+expression DatabricksCatalog = "aml_prod" meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]
+	lineageTag: e858d40a-54ca-5b24-8121-7f4f0915764f
+
+	annotation PBI_ResultType = Text
+
+/// Host of Trino's HTTPS listener, on premises.
+expression TrinoHost = "localhost" meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]
+	lineageTag: f5371cc0-fa50-527e-bd03-5ffce251b805
+
+	annotation PBI_ResultType = Text
+
+/// Port of Trino's HTTPS listener.
+expression TrinoPort = 8443 meta [IsParameterQuery = true, Type = "Number", IsParameterQueryRequired = true]
+	lineageTag: 66b3c38b-a6eb-566b-9624-8b777ce51a15
+
+	annotation PBI_ResultType = Number
+
+/// The published lakehouse: reports never read a staging schema or branch.
+expression Lakehouse =
+		let
+		    Source =
+		        if ServingPlatform = "Databricks" then
+		            Databricks.Catalogs(DatabricksHost, DatabricksHttpPath, [Catalog = null, Database = null, EnableAutomaticProxyDiscovery = null, Implementation = "2.0"]){[Name = DatabricksCatalog, Kind = "Database"]}[Data]
+		        else
+		            StarburstPresto.Contents(TrinoHost, TrinoPort, [Catalog = "lakehouse"]){[Name = "lakehouse", Kind = "Database"]}[Data]
+		in
+		    Source
+	lineageTag: 90cbb779-021d-5702-a532-5744d9aa5849
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+/// Relations that stay on premises after the cutover, read from Trino through the data gateway.
+expression OnPremises =
+		let
+		    Source = StarburstPresto.Contents(TrinoHost, TrinoPort, [Catalog = "lakehouse"]){[Name = "lakehouse", Kind = "Database"]}[Data]
+		in
+		    Source
+	lineageTag: e6db382f-a162-5c3d-afe4-73f62c0a48ef
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation

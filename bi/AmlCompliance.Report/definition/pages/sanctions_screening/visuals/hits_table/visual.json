@@ -1,0 +1,181 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "hits_table",
+  "position": {
+    "x": 24,
+    "y": 436,
+    "z": 6000,
+    "height": 268,
+    "width": 1232,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sanctions hit"
+                    }
+                  },
+                  "Property": "Customer ID"
+                }
+              },
+              "queryRef": "Sanctions hit.Customer ID"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sanctions hit"
+                    }
+                  },
+                  "Property": "Party ID"
+                }
+              },
+              "queryRef": "Sanctions hit.Party ID"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sanctions hit"
+                    }
+                  },
+                  "Property": "List"
+                }
+              },
+              "queryRef": "Sanctions hit.List"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sanctions hit"
+                    }
+                  },
+                  "Property": "Entry ID"
+                }
+              },
+              "queryRef": "Sanctions hit.Entry ID"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sanctions hit"
+                    }
+                  },
+                  "Property": "Entry type"
+                }
+              },
+              "queryRef": "Sanctions hit.Entry type"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sanctions hit"
+                    }
+                  },
+                  "Property": "Listed name"
+                }
+              },
+              "queryRef": "Sanctions hit.Listed name"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sanctions hit"
+                    }
+                  },
+                  "Property": "Name type"
+                }
+              },
+              "queryRef": "Sanctions hit.Name type"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sanctions hit"
+                    }
+                  },
+                  "Property": "Match type"
+                }
+              },
+              "queryRef": "Sanctions hit.Match type"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sanctions hit"
+                    }
+                  },
+                  "Property": "Name similarity"
+                }
+              },
+              "queryRef": "Sanctions hit.Name similarity"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Sanctions hit"
+                  }
+                },
+                "Property": "Name similarity"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Hits to review'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

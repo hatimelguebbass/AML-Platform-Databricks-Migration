@@ -1,0 +1,74 @@
+# Sensitivity of every column of the source, by column name. First matching rule wins; a pattern
+# must match the whole name, and whitespace in it is ignored. There is no catch-all: a column no
+# rule matches fails CI until a reviewed change classifies it. Levels (law 09-08 reading, ADR 0003):
+#   direct    identifies a person on its own; never leaves the premises
+#   indirect  identifies a person only combined with other data; may cross, treated in step 2
+#   none      does not relate to a person
+rules:
+  # Direct identifiers
+  - pattern: (first|last|second|third|fourth|full|legal|primary|listed)_?name(_key)?
+    level: direct
+    reason: Name of a person, or of an organization that can be a sole trader; normalized keys still spell it.
+  - pattern: name|name_key|name_original_script|individual_alias|entity_alias|akalist
+    level: direct
+    reason: Names and aliases of listed persons, which matched to a customer name the customer.
+  - pattern: id_document_(number|key)|tax_id
+    level: direct
+    reason: National ID, passport or tax number, normalized or not.
+  - pattern: phone|email|address_line
+    level: direct
+    reason: Contact details of a person.
+
+  # Indirect identifiers
+  - pattern: birth_date|birth_year|individual_date_of_birth|dateofbirthlist
+    level: indirect
+    reason: Birth date or year; identifies combined with city and gender.
+  - pattern: gender|occupation|nationalit(y|ies|ylist)|residence_countr(y|ies)|city|city_key|postal_code
+    level: indirect
+    reason: Demographic attribute; identifies combined with others.
+  - pattern: (|originator_|beneficiary_|matched_)customer_ids?|party_id|(|originator_|beneficiary_|counterparty_)account_id|card_id
+    level: indirect
+    reason: Technical key of a customer, party, account or card; identifies through the core banking, which stays on premises.
+  - pattern: account_number|rib|(originator|beneficiary)_account|card_token|pan_last4
+    level: indirect
+    reason: Account or card number; identifies through the bank's records, never on its own.
+  - pattern: is_pep
+    level: indirect
+    reason: Politically exposed person flag; narrows a customer down to few people.
+  - pattern: merchant_name
+    level: indirect
+    reason: Card acceptor, which can be a sole trader.
+
+  # Not related to a person
+  - pattern: _.*
+    level: none
+    reason: Lineage and change-capture metadata added by the platform.
+  - pattern: >-
+      (.*_)?(amount|count|records|rows|ratio|seconds|days|median|index|size|offset)(_.*)?|bins?|quotes|attempts
+      |failures|events_read|tombstones|duplicates_dropped|files_(accepted|pending|rejected|skipped)|mismatched|in_flight
+      |missing_in_lakehouse|unexpected_in_lakehouse|already_present|(failed_)?nodes|passed|rate_to_reporting
+      |relative_spread|minor_unit|kafka_partition|name_similarity
+    level: none
+    reason: Amount, count or measure.
+  - pattern: >-
+      .*_(at|on|until)|business_date|(from|to)_date|valid_(from|to)|in_force_(from|to)|txn_local_(at|time)
+      |incorporation_(date|year)|customer_since|list_published
+    level: none
+    reason: Date or time of an event or a record; birth dates are matched before this rule.
+  - pattern: >-
+      (|payment_|receiving_)currency|country_code|alpha_code|numeric_code|mcc|merchant_(city|country|id)|channel
+      |scheme|product|(account|customer|txn|record)_type|legal_form|id_document_type|(customer_)?risk_rating
+      |response_code|payment_format|status|entry_type|list_name|name_type|alias_quality|match_(type|rules)|sdntype
+      |un_list_type|programlist|programs|fatf_list|typology|evidence_role|dimension|dataset|feed|entity|source|step
+      |engine|resource_type|selection|command|check_name|target_table|topic|is_.*|(|originator_|beneficiary_)bank_id
+      |parameters
+    level: none
+    reason: Code, category, flag or bank identifier, shared by many customers.
+  - pattern: >-
+      transfer_id|txn_ref|alert_id|hit_id|entry_id|uid|rule_(id|key|name)|reference_number|auth_code|(pipeline_)?run_id
+      |invocation_id|node_id|contract_(id|version)|file_(name|sha256)
+    level: none
+    reason: Identifier of a transaction, alert, list entry, rule, run or file, not of a person.
+  - pattern: description|detail|error|reason|acknowledgement|acknowledged_by
+    level: none
+    reason: Free text written by the platform or the data team about runs and anomalies.

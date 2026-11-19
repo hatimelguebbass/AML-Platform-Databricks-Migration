@@ -1,0 +1,174 @@
+models:
+  - name: aml_rule
+    description: Transaction monitoring rules and the parameters they run with.
+    columns:
+      - name: rule_id
+        data_type: string
+        data_tests: [unique, not_null]
+      - name: rule_key
+        data_type: string
+        data_tests: [unique, not_null]
+      - name: rule_name
+        data_type: string
+      - name: typology
+        data_type: string
+      - name: description
+        data_type: string
+      - name: parameters
+        description: Rule parameters as a JSON object.
+        data_type: string
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz
+
+  - name: aml_alert_transfer
+    description: >
+      Transfers that made each alert fire, one slice per alert business date. A
+      pass-through or round-trip alert also holds the earlier transfer it was matched to.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [alert_id, transfer_id]
+            loaded_dates_only: true
+    columns:
+      - name: alert_id
+        data_type: string
+        data_tests: [not_null]
+      - name: rule_id
+        data_type: string
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('aml_rule')
+                field: rule_id
+      - name: business_date
+        data_type: date
+        data_tests: [not_null]
+      - name: account_id
+        databricks_tags: {classification: indirect}
+        description: Account the alert is about.
+        data_type: bigint
+        data_tests: [not_null]
+      - name: transfer_id
+        data_type: string
+        data_tests: [not_null]
+      - name: evidence_role
+        description: DEBIT when the account paid, CREDIT when it was paid.
+        data_type: string
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [DEBIT, CREDIT]
+      - name: booked_at
+        data_type: timestamp_ntz
+      - name: counterparty_account_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+      - name: amount
+        description: Amount paid, in the reporting currency.
+        data_type: decimal(22,2)
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz
+
+  - name: aml_alert
+    description: >
+      One alert per rule, account and business date, with the customer as of that date for
+      triage. Amounts are in the reporting currency.
+    columns:
+      - name: alert_id
+        data_type: string
+        data_tests: [not_null, unique_in_loaded_dates]
+      - name: rule_id
+        data_type: string
+        data_tests: [not_null]
+      - name: business_date
+        data_type: date
+        data_tests: [not_null]
+      - name: account_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+        data_tests: [not_null]
+      - name: customer_id
+        databricks_tags: {classification: indirect}
+        description: Holder of the account on the business date.
+        data_type: bigint
+        data_tests: [not_null]
+      - name: party_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+        data_tests: [not_null]
+      - name: customer_risk_rating
+        description: KYC risk rating on the business date.
+        data_type: string
+        data_tests: [not_null]
+      - name: is_pep
+        data_type: boolean
+        databricks_tags: {classification: indirect}
+      - name: transfer_count
+        data_type: bigint
+      - name: counterparty_count
+        data_type: bigint
+      - name: credited_amount
+        data_type: decimal(38,2)
+      - name: debited_amount
+        data_type: decimal(38,2)
+      - name: first_booked_at
+        data_type: timestamp_ntz
+      - name: last_booked_at
+        data_type: timestamp_ntz
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz
+
+  - name: sanctions_hit
+    description: >
+      Current customers whose name matches a UN or OFAC listed name, one row per customer and
+      listed entry, as screened on premises where the names are. Neither name crosses.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [customer_id, list_name, entry_id]
+    columns:
+      - name: hit_id
+        data_type: string
+        data_tests: [unique, not_null]
+      - name: customer_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+        data_tests: [not_null]
+      - name: party_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+        data_tests: [not_null]
+      - name: list_name
+        data_type: string
+      - name: entry_id
+        data_type: string
+      - name: entry_type
+        data_type: string
+      - name: name_type
+        description: PRIMARY or ALIAS.
+        data_type: string
+      - name: match_type
+        description: >
+          EXACT (same compacted name), TOKENS (every token of the shorter name in the other,
+          covering enough of the longer one) or FUZZY (similar compacted names).
+        data_type: string
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [EXACT, TOKENS, FUZZY]
+      - name: name_similarity
+        description: 1 - Levenshtein distance / length of the longer compacted name.
+        data_type: double
+      - name: _delivery_id
+        description: Delivery of the on-premises export the snapshot came with.
+        data_type: string
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz

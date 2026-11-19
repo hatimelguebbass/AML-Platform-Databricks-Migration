@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "hits_card",
+  "position": {
+    "x": 24.0,
+    "y": 88,
+    "z": 2000,
+    "height": 96,
+    "width": 608.0,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sanctions hit"
+                    }
+                  },
+                  "Property": "Sanctions hits"
+                }
+              },
+              "queryRef": "Sanctions hit.Sanctions hits"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

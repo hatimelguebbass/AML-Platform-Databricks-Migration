@@ -1,0 +1,35 @@
+resources:
+  jobs:
+    ingest_bronze:
+      name: ingest_bronze
+      description: >-
+        Sealed deliveries of the landing volume into bronze Delta tables, after the manifest, landing
+        contract, file checksums and control totals agree; every decision goes to landing.delivery_log.
+      # Two runs would decide the same delivery twice.
+      max_concurrent_runs: 1
+      timeout_seconds: 3600
+      parameters:
+        - name: retry
+          default: ""
+        # Key id of a pseudonymization key rotation (docs/runbook.md); empty outside one.
+        - name: rekey
+          default: ""
+      tasks:
+        - task_key: ingest
+          environment_key: lakemig
+          # A rejected delivery fails the same way twice; serverless would otherwise retry it.
+          disable_auto_optimization: true
+          python_wheel_task:
+            package_name: lakemig
+            entry_point: lakemig-ingest
+            parameters:
+              - --catalog=${var.catalog}
+              - --run-id={{job.run_id}}
+              - --retry={{job.parameters.retry}}
+              - --rekey={{job.parameters.rekey}}
+      environments:
+        - environment_key: lakemig
+          spec:
+            environment_version: ${var.serverless_environment_version}
+            dependencies:
+              - ../dist/*.whl

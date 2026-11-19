@@ -1,0 +1,25 @@
+name: Set up the Databricks CLI
+description: Installs the pinned Databricks CLI release after checking its SHA-256.
+inputs:
+  version:
+    description: CLI release; must match bundle.databricks_cli_version in databricks.yml.
+    default: "1.26.0"
+  sha256:
+    description: SHA-256 of databricks_cli_<version>_linux_amd64.zip, from the release's SHA256SUMS.
+    default: ce3dad5ab0aa3f33ba5954ad4f00a33495da0da4891c9b8ad438bc4137a0cc50
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+        SHA256: ${{ inputs.sha256 }}
+      run: |
+        archive="databricks_cli_${VERSION}_linux_amd64.zip"
+        curl -sSfL --retry 5 --retry-all-errors -o "$RUNNER_TEMP/$archive" \
+          "https://github.com/databricks/cli/releases/download/v${VERSION}/${archive}"
+        echo "${SHA256}  $RUNNER_TEMP/$archive" | sha256sum --check --strict
+        unzip -q -o "$RUNNER_TEMP/$archive" databricks -d "$RUNNER_TEMP/databricks-cli"
+        echo "$RUNNER_TEMP/databricks-cli" >> "$GITHUB_PATH"
+    - shell: bash
+      run: databricks --version

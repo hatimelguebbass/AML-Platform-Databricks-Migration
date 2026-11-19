@@ -1,0 +1,84 @@
+# Fate of every object of the source inventory (ADR 0001). `lakemig assess` checks that each
+# object is placed exactly once, that a rebuilt object reads only objects of its own or an earlier
+# wave, and that no rebuilt object holds a direct identifier. Exported objects cross without their
+# direct identifiers (docs/assessment/waves.md lists which).
+waves:
+  - wave: 1
+    name: Customer reference without identity
+    goal: >-
+      Customer, account and card histories (SCD2) rebuilt in the cloud from the core banking change
+      logs, exported without direct identifiers, and the party each customer belongs to, resolved on
+      premises where the names are. Every later wave joins on these keys.
+    objects:
+      bronze.corebanking_customer: export
+      bronze.corebanking_account: export
+      bronze.corebanking_card: export
+      audit.change_batch: export
+      silver.customer_history: rebuild
+      silver.account_history: rebuild
+      silver.card_history: rebuild
+      silver.party_member: export
+      silver.party: rebuild
+
+  - wave: 2
+    name: Payments and cards
+    goal: >-
+      The daily transfer and card feeds to silver: almost all of the volume, and only technical keys
+      for the people involved.
+    objects:
+      bronze.payment_transfer: export
+      bronze.card_transaction: export
+      reference.iso_currency: rebuild
+      silver.payment_transfer: rebuild
+      silver.card_transaction: rebuild
+      silver.fx_rate: rebuild
+
+  - wave: 3
+    name: AML rules and alerts
+    goal: >-
+      The seven monitoring rules, their alerts and evidence, rebuilt in the cloud, plus the sanctions
+      hits computed on premises. The parity report requires zero difference on this wave.
+    objects:
+      reference.high_risk_jurisdiction: rebuild
+      gold.monitored_transfer: rebuild
+      gold.rule_fan_in: rebuild
+      gold.rule_fan_out: rebuild
+      gold.rule_pass_through: rebuild
+      gold.rule_round_trip: rebuild
+      gold.rule_volume_spike: rebuild
+      gold.rule_structuring: rebuild
+      gold.rule_high_risk_jurisdiction: rebuild
+      gold.aml_alert_transfer: rebuild
+      gold.aml_alert: rebuild
+      gold.aml_rule: rebuild
+      gold.sanctions_hit: export
+
+  - wave: 4
+    name: Data observability
+    goal: Volume and distribution checks of each business date, recomputed on the cloud tables.
+    objects:
+      reference.acknowledged_anomaly: rebuild
+      observability.dataset_profile: rebuild
+      observability.volume_check: rebuild
+      observability.distribution_drift: rebuild
+
+on_premises:
+  corebanking.core.customer: Core banking system of record, with the identities.
+  corebanking.core.account: Core banking system of record.
+  corebanking.core.card: Core banking system of record.
+  restricted.customer_identity: Direct identifiers of every customer (law 09-08).
+  silver.customer_match: Pairs of customer records matched on names, ID numbers and birth dates.
+  bronze.sanctions_un_individual: Screening compares listed names with customer names, so it runs where the names are.
+  bronze.sanctions_un_entity: As above.
+  bronze.sanctions_ofac_sdn_entry: As above.
+  silver.sanctions_entry: As above.
+  silver.sanctions_name: As above.
+  observability.corebanking_reconciliation: Reconciles the lakehouse with the core banking database, which stays.
+
+retired:
+  audit.ingestion_run: Lakeflow job run history.
+  audit.ingestion_file: The cloud ingestion registry of landed exports and their manifests (step 3).
+  audit.publish_check: The audit results of the cloud write-audit-publish (step 5).
+  audit.dbt_node_run: dbt run results recorded by the cloud jobs, and the billing and job system tables.
+  observability.layer_reconciliation: Reconciliation of each cloud layer with the export manifests (steps 3 and 8).
+  observability.pipeline_run: Job run history and system tables (step 8).

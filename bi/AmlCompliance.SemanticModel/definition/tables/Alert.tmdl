@@ -1,0 +1,168 @@
+/// One alert per rule, account and business date (gold.aml_alert).
+table Alert
+	lineageTag: fbe50c6b-2cda-5237-9550-e76ab1ca5e4a
+
+	/// Alerts raised.
+	measure Alerts = COUNTROWS ( Alert )
+		formatString: #,0
+		displayFolder: Alerts
+		lineageTag: 6b9789df-fa4e-5571-81f8-d4828222ad50
+
+	/// Accounts with at least one alert.
+	measure 'Alerted accounts' = DISTINCTCOUNT ( Alert[Account ID] )
+		formatString: #,0
+		displayFolder: Alerts
+		lineageTag: a75e9eef-5264-5fe3-bac6-3337d3a0a148
+
+	/// Resolved parties with at least one alert: a person with several customer records counts once.
+	measure 'Alerted parties' = DISTINCTCOUNT ( Alert[Party ID] )
+		formatString: #,0
+		displayFolder: Alerts
+		lineageTag: 810dbca5-0390-5ca2-bb32-35d67c1169b0
+
+	/// Alerts on accounts held by a politically exposed person on the business date.
+	measure 'PEP alerts' = CALCULATE ( [Alerts], Alert[Is PEP] = TRUE () )
+		formatString: #,0
+		displayFolder: Alerts
+		lineageTag: 5a683b55-ecb7-5e6f-b7fc-47428842ceb7
+
+	/// Alerts on accounts whose holder had a HIGH KYC risk rating on the business date.
+	measure 'High-risk customer alerts' = CALCULATE ( [Alerts], Alert[Customer risk rating] = "HIGH" )
+		formatString: #,0
+		displayFolder: Alerts
+		lineageTag: 72f6718e-3e2c-525e-b73f-90d0b6c16485
+
+	/// Alerts over the business dates in the filter context, days without an alert included.
+	measure 'Alerts per business day' = DIVIDE ( [Alerts], COUNTROWS ( 'Date' ) )
+		formatString: #,0.0
+		displayFolder: Alerts
+		lineageTag: 961dd8d8-3b19-5464-bd4d-84c3ae43c1ee
+
+	/// Amount received by the alerted accounts in the alerts.
+	measure 'Total credited (USD)' = SUM ( Alert[Credited amount] )
+		formatString: #,0
+		displayFolder: Alerts
+		lineageTag: 991e37af-77a0-5574-9e8c-fc1a6e321ebf
+
+	/// Amount paid by the alerted accounts in the alerts.
+	measure 'Total debited (USD)' = SUM ( Alert[Debited amount] )
+		formatString: #,0
+		displayFolder: Alerts
+		lineageTag: d189879e-29be-5045-8da3-f6600037154c
+
+	/// Stable identifier: the same rule, account and date always give the same ID.
+	column 'Alert ID'
+		dataType: string
+		lineageTag: 1100ebd1-1bf2-59e3-99c9-2c8a5947d3b9
+		summarizeBy: none
+		sourceColumn: alert_id
+
+	column 'Rule ID'
+		dataType: string
+		isHidden
+		lineageTag: 64355df8-75d6-5172-b325-f12f7548214c
+		summarizeBy: none
+		sourceColumn: rule_id
+
+	column 'Business date'
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: e2c9972f-0144-57af-98b0-fddcb82f98f8
+		summarizeBy: none
+		sourceColumn: business_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Account ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: c21e76e8-7bd8-55eb-b0bf-f2f9331e628b
+		summarizeBy: none
+		sourceColumn: account_id
+
+	/// Holder of the account on the business date.
+	column 'Customer ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: 42dcf4c7-3dbd-5638-a92b-93f1cfe52527
+		summarizeBy: none
+		sourceColumn: customer_id
+
+	/// Resolved party: every customer record of the same person or company.
+	column 'Party ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: 0274090d-137f-5444-9d95-38747e623f50
+		summarizeBy: none
+		sourceColumn: party_id
+
+	/// KYC risk rating on the business date.
+	column 'Customer risk rating'
+		dataType: string
+		lineageTag: f2192189-7269-5418-80b4-428796d4dfd2
+		summarizeBy: none
+		sourceColumn: customer_risk_rating
+
+	/// Politically exposed person on the business date.
+	column 'Is PEP'
+		dataType: boolean
+		lineageTag: b4c210a4-f918-5a02-a949-da1c8cd6eedb
+		summarizeBy: none
+		sourceColumn: is_pep
+
+	/// Transfers that made the alert fire.
+	column Transfers
+		dataType: int64
+		formatString: #,0
+		lineageTag: 070af2c1-db8d-512c-a42e-e3940a78d22f
+		summarizeBy: none
+		sourceColumn: transfer_count
+
+	column Counterparties
+		dataType: int64
+		formatString: #,0
+		lineageTag: cf70f43b-351c-57d0-bd5e-18ebb285d5fd
+		summarizeBy: none
+		sourceColumn: counterparty_count
+
+	/// Received by the account in the alert, in USD.
+	column 'Credited amount'
+		dataType: decimal
+		formatString: #,0.00
+		lineageTag: afad5923-6520-59a9-a2d1-6945ce2cebc9
+		summarizeBy: none
+		sourceColumn: credited_amount
+
+	/// Paid by the account in the alert, in USD.
+	column 'Debited amount'
+		dataType: decimal
+		formatString: #,0.00
+		lineageTag: 7248d84f-2e98-56e4-b676-5339399e748a
+		summarizeBy: none
+		sourceColumn: debited_amount
+
+	column 'First booked at'
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: 05a5b91f-7ebb-5078-b766-116e388313b0
+		summarizeBy: none
+		sourceColumn: first_booked_at
+
+	column 'Last booked at'
+		dataType: dateTime
+		formatString: yyyy-mm-dd hh:nn
+		lineageTag: eb52216d-ad91-5121-b599-e23534b12499
+		summarizeBy: none
+		sourceColumn: last_booked_at
+
+	partition Alert = m
+		mode: import
+		source =
+				let
+				    Source = Lakehouse{[Name = "gold", Kind = "Schema"]}[Data]{[Name = "aml_alert", Kind = "Table"]}[Data],
+				    Columns = Table.SelectColumns(Source, {"alert_id", "rule_id", "business_date", "account_id", "customer_id", "party_id", "customer_risk_rating", "is_pep", "transfer_count", "counterparty_count", "credited_amount", "debited_amount", "first_booked_at", "last_booked_at"}),
+				    Typed = Table.TransformColumnTypes(Columns, {{"alert_id", type text}, {"rule_id", type text}, {"business_date", type date}, {"account_id", Int64.Type}, {"customer_id", Int64.Type}, {"party_id", Int64.Type}, {"customer_risk_rating", type text}, {"is_pep", type logical}, {"transfer_count", Int64.Type}, {"counterparty_count", Int64.Type}, {"credited_amount", Currency.Type}, {"debited_amount", Currency.Type}, {"first_booked_at", type datetime}, {"last_booked_at", type datetime}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

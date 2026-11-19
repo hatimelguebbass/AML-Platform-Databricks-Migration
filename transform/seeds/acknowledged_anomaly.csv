@@ -1,0 +1,5 @@
+dataset,from_date,to_date,reason,acknowledged_by,acknowledged_on
+silver.payment_transfer,2022-09-01,2022-09-01,"First date of the payments hub history: 481,056 REINVESTMENT transfers, the opening positions, which no later date carries.",data-platform,2026-11-13
+gold.aml_alert,2022-09-01,2022-09-01,Follows the payments of the same date.,data-platform,2026-11-13
+silver.payment_transfer,2022-09-11,2022-09-18,"Payments hub history ends on 2022-09-10; later dates carry only the last transfers of chains started before, 11 to 396 a day.",data-platform,2026-11-13
+gold.aml_alert,2022-09-11,2022-09-18,Follows the payments volume of the same dates.,data-platform,2026-11-13

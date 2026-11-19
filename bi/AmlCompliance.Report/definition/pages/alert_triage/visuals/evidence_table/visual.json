@@ -1,0 +1,129 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "evidence_table",
+  "position": {
+    "x": 24,
+    "y": 464,
+    "z": 7000,
+    "height": 240,
+    "width": 1232,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert evidence"
+                    }
+                  },
+                  "Property": "Transfer ID"
+                }
+              },
+              "queryRef": "Alert evidence.Transfer ID"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert evidence"
+                    }
+                  },
+                  "Property": "Evidence role"
+                }
+              },
+              "queryRef": "Alert evidence.Evidence role"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert evidence"
+                    }
+                  },
+                  "Property": "Booked at"
+                }
+              },
+              "queryRef": "Alert evidence.Booked at"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert evidence"
+                    }
+                  },
+                  "Property": "Counterparty account ID"
+                }
+              },
+              "queryRef": "Alert evidence.Counterparty account ID"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Alert evidence"
+                    }
+                  },
+                  "Property": "Evidence amount (USD)"
+                }
+              },
+              "queryRef": "Alert evidence.Evidence amount (USD)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Alert evidence"
+                  }
+                },
+                "Property": "Booked at"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Evidence transfers'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

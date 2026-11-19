@@ -1,0 +1,281 @@
+{
+  "format_version": 1,
+  "catalog": "aml_prod",
+  "events": [
+    {
+      "phase": "preflight",
+      "started_at": "2026-11-17T01:08:20+00:00",
+      "finished_at": "2026-11-17T01:08:38+00:00",
+      "seconds": 18.5,
+      "passed": false,
+      "checks": [
+        {
+          "name": "key_custody",
+          "passed": false,
+          "detail": "RuntimeError: [INSUFFICIENT_PERMISSIONS] Insufficient privileges:\nPrincipal 'Platform Admin' does not have SELECT on Table 'aml_prod.landing.delivery_log'. SQLSTATE: 42501\nselect max_by(key_id, logged_at) from aml_prod.landing.delivery_log where status = 'accepted'"
+        },
+        {
+          "name": "deliveries",
+          "passed": false,
+          "detail": "RuntimeError: [INSUFFICIENT_PERMISSIONS] Insufficient privileges:\nPrincipal 'Platform Admin' does not have SELECT on Table 'aml_prod.landing.delivery_log'. SQLSTATE: 42501\nselect cast(business_date as string), delivery_id, max_by(status, logged_at), max(logged_at) from aml_prod.landing.delivery_log group by all order by 1, 4"
+        },
+        {
+          "name": "publications",
+          "passed": true,
+          "detail": "18/18 dates published"
+        },
+        {
+          "name": "parity",
+          "passed": false,
+          "detail": "republished since the comparison: 2022-09-01, 2022-09-02, 2022-09-03, 2022-09-04, 2022-09-05, 2022-09-06, 2022-09-07, 2022-09-08, 2022-09-09, 2022-09-10, 2022-09-11, 2022-09-12, 2022-09-13, 2022-09-14, 2022-09-15, 2022-09-16, 2022-09-17, 2022-09-18"
+        },
+        {
+          "name": "report_columns",
+          "passed": true,
+          "detail": "51 columns of 6 tables, types load"
+        },
+        {
+          "name": "reader_grants",
+          "passed": true,
+          "detail": "aml-reporting reads gold, observability"
+        },
+        {
+          "name": "no_active_runs",
+          "passed": true,
+          "detail": "no job run in flight"
+        }
+      ],
+      "serving": null,
+      "facts": {
+        "tag": "cutover-prod",
+        "business_dates": "2022-09-01..2022-09-18"
+      }
+    },
+    {
+      "phase": "freeze",
+      "started_at": "2026-11-17T01:09:57+00:00",
+      "finished_at": "2026-11-17T01:09:57+00:00",
+      "seconds": 0.1,
+      "passed": true,
+      "checks": [
+        {
+          "name": "freeze",
+          "passed": true,
+          "detail": "cutover-prod created at main@39d4e47681fa88ea4d9b6c27bda3cee58cf695a85e0d07f66765d2869aacd2b5"
+        }
+      ],
+      "serving": null,
+      "facts": {
+        "tag": "cutover-prod",
+        "business_dates": "2022-09-01..2022-09-18",
+        "reference": "main@39d4e47681fa88ea4d9b6c27bda3cee58cf695a85e0d07f66765d2869aacd2b5"
+      }
+    },
+    {
+      "phase": "preflight",
+      "started_at": "2026-11-17T02:27:47+00:00",
+      "finished_at": "2026-11-17T02:27:54+00:00",
+      "seconds": 6.3,
+      "passed": true,
+      "checks": [
+        {
+          "name": "key_custody",
+          "passed": true,
+          "detail": "target pseudonyms under key b79a2e8dafdb40c6, the on-premises key is b79a2e8dafdb40c6"
+        },
+        {
+          "name": "deliveries",
+          "passed": true,
+          "detail": "18/18 dates with an accepted delivery"
+        },
+        {
+          "name": "publications",
+          "passed": true,
+          "detail": "18/18 dates published"
+        },
+        {
+          "name": "parity",
+          "passed": true,
+          "detail": "12 tables equal, 8132982 rows"
+        },
+        {
+          "name": "report_columns",
+          "passed": true,
+          "detail": "51 columns of 6 tables, types load"
+        },
+        {
+          "name": "reader_grants",
+          "passed": true,
+          "detail": "aml-reporting reads gold, observability"
+        },
+        {
+          "name": "no_active_runs",
+          "passed": true,
+          "detail": "no job run in flight"
+        }
+      ],
+      "serving": null,
+      "facts": {
+        "tag": "cutover-prod",
+        "business_dates": "2022-09-01..2022-09-18"
+      }
+    },
+    {
+      "phase": "switch",
+      "started_at": "2026-11-17T02:27:58+00:00",
+      "finished_at": "2026-11-17T02:28:12+00:00",
+      "seconds": 13.8,
+      "passed": true,
+      "checks": [
+        {
+          "name": "source_frozen",
+          "passed": true,
+          "detail": "cutover-prod at 39d4e47681fa, main at 39d4e47681fa"
+        },
+        {
+          "name": "key_custody",
+          "passed": true,
+          "detail": "target pseudonyms under key b79a2e8dafdb40c6, the on-premises key is b79a2e8dafdb40c6"
+        },
+        {
+          "name": "deliveries",
+          "passed": true,
+          "detail": "18/18 dates with an accepted delivery"
+        },
+        {
+          "name": "publications",
+          "passed": true,
+          "detail": "18/18 dates published"
+        },
+        {
+          "name": "parity",
+          "passed": true,
+          "detail": "12 tables equal, 8132982 rows"
+        },
+        {
+          "name": "report_columns",
+          "passed": true,
+          "detail": "51 columns of 6 tables, types load"
+        },
+        {
+          "name": "reader_grants",
+          "passed": true,
+          "detail": "aml-reporting reads gold, observability"
+        },
+        {
+          "name": "no_active_runs",
+          "passed": true,
+          "detail": "no job run in flight"
+        },
+        {
+          "name": "report_rows",
+          "passed": true,
+          "detail": "6 tables, 146823 rows on each side"
+        },
+        {
+          "name": "on_premises_tables",
+          "passed": true,
+          "detail": "2 tables read"
+        }
+      ],
+      "serving": "Databricks",
+      "facts": {
+        "tag": "cutover-prod",
+        "business_dates": "2022-09-01..2022-09-18"
+      }
+    },
+    {
+      "phase": "rollback",
+      "started_at": "2026-11-17T02:28:22+00:00",
+      "finished_at": "2026-11-17T02:28:28+00:00",
+      "seconds": 6.1,
+      "passed": true,
+      "checks": [
+        {
+          "name": "source_tables",
+          "passed": true,
+          "detail": "8 tables read"
+        },
+        {
+          "name": "report_rows",
+          "passed": true,
+          "detail": "6 tables, 146823 rows on each side"
+        },
+        {
+          "name": "source_current",
+          "passed": true,
+          "detail": "no date to catch up on the source"
+        }
+      ],
+      "serving": "Trino",
+      "facts": {
+        "tag": "cutover-prod",
+        "business_dates": "2022-09-01..2022-09-18"
+      }
+    },
+    {
+      "phase": "switch",
+      "started_at": "2026-11-17T02:28:33+00:00",
+      "finished_at": "2026-11-17T02:28:42+00:00",
+      "seconds": 9.0,
+      "passed": true,
+      "checks": [
+        {
+          "name": "source_frozen",
+          "passed": true,
+          "detail": "cutover-prod at 39d4e47681fa, main at 39d4e47681fa"
+        },
+        {
+          "name": "key_custody",
+          "passed": true,
+          "detail": "target pseudonyms under key b79a2e8dafdb40c6, the on-premises key is b79a2e8dafdb40c6"
+        },
+        {
+          "name": "deliveries",
+          "passed": true,
+          "detail": "18/18 dates with an accepted delivery"
+        },
+        {
+          "name": "publications",
+          "passed": true,
+          "detail": "18/18 dates published"
+        },
+        {
+          "name": "parity",
+          "passed": true,
+          "detail": "12 tables equal, 8132982 rows"
+        },
+        {
+          "name": "report_columns",
+          "passed": true,
+          "detail": "51 columns of 6 tables, types load"
+        },
+        {
+          "name": "reader_grants",
+          "passed": true,
+          "detail": "aml-reporting reads gold, observability"
+        },
+        {
+          "name": "no_active_runs",
+          "passed": true,
+          "detail": "no job run in flight"
+        },
+        {
+          "name": "report_rows",
+          "passed": true,
+          "detail": "6 tables, 146823 rows on each side"
+        },
+        {
+          "name": "on_premises_tables",
+          "passed": true,
+          "detail": "2 tables read"
+        }
+      ],
+      "serving": "Databricks",
+      "facts": {
+        "tag": "cutover-prod",
+        "business_dates": "2022-09-01..2022-09-18"
+      }
+    }
+  ]
+}

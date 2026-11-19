@@ -1,0 +1,676 @@
+{
+  "format_version": 1,
+  "tables": {
+    "card_transaction": [
+      {
+        "name": "record_type",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "txn_ref",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "card_token",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "txn_local_time",
+        "type": "timestamp[us]",
+        "nullable": true
+      },
+      {
+        "name": "txn_type",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "channel",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "mcc",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "merchant_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "merchant_name",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "merchant_city",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "merchant_country",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "amount_minor",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "response_code",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "auth_code",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_business_date",
+        "type": "date32[day]",
+        "nullable": true
+      },
+      {
+        "name": "_source_file",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_ingest_run_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_ingested_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      }
+    ],
+    "change_batch": [
+      {
+        "name": "run_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "source",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "contract_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "contract_version",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "topic",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "kafka_partition",
+        "type": "int32",
+        "nullable": true
+      },
+      {
+        "name": "target_table",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "start_offset",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "end_offset",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "events_read",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "tombstones",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "records_written",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "processed_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      },
+      {
+        "name": "business_date",
+        "type": "date32[day]",
+        "nullable": true
+      }
+    ],
+    "corebanking_account": [
+      {
+        "name": "account_id",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "customer_id",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "bank_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "account_number",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "account_type",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "currency",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "opened_on",
+        "type": "date32[day]",
+        "nullable": true
+      },
+      {
+        "name": "closed_on",
+        "type": "date32[day]",
+        "nullable": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      },
+      {
+        "name": "_op",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_snapshot",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_source_lsn",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "_source_tx_id",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "_source_committed_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      },
+      {
+        "name": "_kafka_topic",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_kafka_partition",
+        "type": "int32",
+        "nullable": true
+      },
+      {
+        "name": "_kafka_offset",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "_ingest_run_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_ingested_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      }
+    ],
+    "corebanking_card": [
+      {
+        "name": "card_id",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "account_id",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "card_token",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "scheme",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "product",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "issued_on",
+        "type": "date32[day]",
+        "nullable": true
+      },
+      {
+        "name": "expires_on",
+        "type": "date32[day]",
+        "nullable": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      },
+      {
+        "name": "_op",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_snapshot",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_source_lsn",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "_source_tx_id",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "_source_committed_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      },
+      {
+        "name": "_kafka_topic",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_kafka_partition",
+        "type": "int32",
+        "nullable": true
+      },
+      {
+        "name": "_kafka_offset",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "_ingest_run_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_ingested_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      }
+    ],
+    "corebanking_customer": [
+      {
+        "name": "customer_id",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "customer_type",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "gender",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "birth_year",
+        "type": "int32",
+        "nullable": true
+      },
+      {
+        "name": "legal_form",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "incorporation_date",
+        "type": "date32[day]",
+        "nullable": true
+      },
+      {
+        "name": "id_document_type",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "nationality",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "residence_country",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "occupation",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "city",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "risk_rating",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "is_pep",
+        "type": "bool",
+        "nullable": true
+      },
+      {
+        "name": "customer_since",
+        "type": "date32[day]",
+        "nullable": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      },
+      {
+        "name": "_op",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_snapshot",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_source_lsn",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "_source_tx_id",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "_source_committed_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      },
+      {
+        "name": "_kafka_topic",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_kafka_partition",
+        "type": "int32",
+        "nullable": true
+      },
+      {
+        "name": "_kafka_offset",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "_ingest_run_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_ingested_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      }
+    ],
+    "party_member": [
+      {
+        "name": "customer_id",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "party_id",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "party_size",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "_pipeline_run_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_loaded_at",
+        "type": "timestamp[us]",
+        "nullable": true
+      }
+    ],
+    "payment_transfer": [
+      {
+        "name": "transfer_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "booked_at",
+        "type": "timestamp[us]",
+        "nullable": true
+      },
+      {
+        "name": "originator_bank_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "originator_account",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "beneficiary_bank_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "beneficiary_account",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "amount_paid",
+        "type": "decimal128(22, 6)",
+        "nullable": true
+      },
+      {
+        "name": "payment_currency",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "amount_received",
+        "type": "decimal128(22, 6)",
+        "nullable": true
+      },
+      {
+        "name": "receiving_currency",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "payment_format",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_business_date",
+        "type": "date32[day]",
+        "nullable": true
+      },
+      {
+        "name": "_source_file",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_ingest_run_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_ingested_at",
+        "type": "timestamp[us, tz=UTC]",
+        "nullable": true
+      }
+    ],
+    "sanctions_hit": [
+      {
+        "name": "hit_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "customer_id",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "party_id",
+        "type": "int64",
+        "nullable": true
+      },
+      {
+        "name": "list_name",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "entry_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "entry_type",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "name_type",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "match_type",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "name_similarity",
+        "type": "double",
+        "nullable": true
+      },
+      {
+        "name": "_pipeline_run_id",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "_loaded_at",
+        "type": "timestamp[us]",
+        "nullable": true
+      }
+    ]
+  }
+}

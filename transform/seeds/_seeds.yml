@@ -1,0 +1,80 @@
+seeds:
+  - name: iso_currency
+    description: ISO 4217 codes of the currencies the card processor settles in.
+    config:
+      column_types:
+        numeric_code: string
+        alpha_code: string
+        minor_unit: int
+    columns:
+      - name: numeric_code
+        data_tests: [unique, not_null]
+      - name: alpha_code
+        data_tests: [unique, not_null]
+      - name: minor_unit
+        data_tests: [not_null]
+
+  - name: high_risk_jurisdiction
+    description: >
+      FATF lists of high-risk jurisdictions (call for action) and jurisdictions under increased
+      monitoring, as published on 17 June 2022 and in force until the next publication of
+      21 October 2022. A new publication is added as new rows; rows are never edited, so a
+      rerun of a past date screens against the lists in force on that date.
+    config:
+      column_types:
+        country_code: string
+        fatf_list: string
+        in_force_from: date
+        in_force_to: date
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [country_code, in_force_from]
+    columns:
+      - name: country_code
+        description: ISO 3166-1 alpha-2.
+        data_tests: [not_null]
+      - name: fatf_list
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [CALL_FOR_ACTION, INCREASED_MONITORING]
+      - name: in_force_from
+        data_tests: [not_null]
+      - name: in_force_to
+        description: Publication that superseded the list; null while in force.
+
+  - name: acknowledged_anomaly
+    description: >
+      Volume anomalies and distribution drifts that were investigated and accepted, per
+      dataset and range of business dates. A check reports them as ACKNOWLEDGED instead of
+      failing, and leaves those dates out of the baselines of later dates. Rows are added
+      through a reviewed commit, never edited, so the reason stays with the data it explains.
+      Carried over from the source unchanged: the same data shows the same anomalies.
+    config:
+      column_types:
+        dataset: string
+        from_date: date
+        to_date: date
+        reason: string
+        acknowledged_by: string
+        acknowledged_on: date
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [dataset, from_date]
+    columns:
+      - name: dataset
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [silver.payment_transfer, silver.card_transaction, gold.aml_alert]
+      - name: from_date
+        data_tests: [not_null]
+      - name: to_date
+        data_tests: [not_null]
+      - name: reason
+        data_tests: [not_null]
+      - name: acknowledged_by
+        data_tests: [not_null]

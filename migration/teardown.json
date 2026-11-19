@@ -1,0 +1,220 @@
+{
+  "format_version": 1,
+  "measured_at": "2026-11-18T21:55:58+00:00",
+  "window": [
+    "2026-11-15",
+    "2026-11-18"
+  ],
+  "managed": [
+    {
+      "root": "bootstrap",
+      "type": "azurerm_resource_group",
+      "place": "Azure Resource Manager",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "bootstrap",
+      "type": "azurerm_role_assignment",
+      "place": "Azure Resource Manager",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "bootstrap",
+      "type": "azurerm_storage_account",
+      "place": "Azure Resource Manager",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "bootstrap",
+      "type": "azurerm_storage_container",
+      "place": "Azure Resource Manager",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "azapi_resource",
+      "place": "Azure Resource Manager",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "azuread_application",
+      "place": "Microsoft Entra ID",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "azuread_application_federated_identity_credential",
+      "place": "Microsoft Entra ID",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "azuread_service_principal",
+      "place": "Microsoft Entra ID",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "azurerm_consumption_budget_subscription",
+      "place": "Azure Resource Manager",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "azurerm_databricks_access_connector",
+      "place": "Azure Resource Manager",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "azurerm_resource_group",
+      "place": "Azure Resource Manager",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "azurerm_role_assignment",
+      "place": "Azure Resource Manager",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "azurerm_storage_account",
+      "place": "Azure Resource Manager",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "azurerm_storage_container",
+      "place": "Azure Resource Manager",
+      "destroyed": 2,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "databricks_catalog",
+      "place": "prod workspace",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "databricks_entitlements",
+      "place": "prod workspace",
+      "destroyed": 5,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "databricks_external_location",
+      "place": "prod workspace",
+      "destroyed": 2,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "databricks_grants",
+      "place": "prod workspace",
+      "destroyed": 2,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "databricks_group",
+      "place": "Databricks account",
+      "destroyed": 6,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "databricks_group_member",
+      "place": "Databricks account",
+      "destroyed": 5,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "databricks_mws_permission_assignment",
+      "place": "Databricks account",
+      "destroyed": 6,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "databricks_permissions",
+      "place": "prod workspace",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "databricks_service_principal",
+      "place": "Databricks account",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "databricks_sql_endpoint",
+      "place": "prod workspace",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "databricks_storage_credential",
+      "place": "prod workspace",
+      "destroyed": 1,
+      "remaining": 0
+    },
+    {
+      "root": "prod",
+      "type": "databricks_workspace_binding",
+      "place": "prod workspace",
+      "destroyed": 4,
+      "remaining": 0
+    }
+  ],
+  "resource_groups": [],
+  "resources": [],
+  "metastores": [
+    {
+      "name": "metastore_azure_francecentral",
+      "region": "francecentral",
+      "workspaces": 0
+    }
+  ],
+  "currency": "USD",
+  "daily_cost": [
+    {
+      "day": "2026-11-15",
+      "cost": 0.096341
+    },
+    {
+      "day": "2026-11-16",
+      "cost": 6.947077
+    },
+    {
+      "day": "2026-11-17",
+      "cost": 3.83538
+    },
+    {
+      "day": "2026-11-18",
+      "cost": 0.140665
+    }
+  ]
+}

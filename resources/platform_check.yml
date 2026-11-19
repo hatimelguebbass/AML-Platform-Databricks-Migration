@@ -1,0 +1,24 @@
+resources:
+  jobs:
+    platform_check:
+      name: platform_check
+      description: Proves the environment is usable after a deployment (catalog, schemas, managed tables, runtime).
+      max_concurrent_runs: 1
+      timeout_seconds: 1800
+      tasks:
+        - task_key: check
+          environment_key: lakemig
+          python_wheel_task:
+            package_name: lakemig
+            entry_point: lakemig-platform-check
+            parameters:
+              - --catalog=${var.catalog}
+              - --schemas=landing,bronze,silver,gold,reference,observability,migration,governance,reference_staging,silver_staging,gold_staging,observability_staging
+              - --run-id={{job.run_id}}
+      environments:
+        - environment_key: lakemig
+          spec:
+            environment_version: ${var.serverless_environment_version}
+            dependencies:
+              - ../dist/*.whl
+              - dbt-databricks==1.13.0

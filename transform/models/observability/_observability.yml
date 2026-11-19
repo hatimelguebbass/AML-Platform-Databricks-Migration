@@ -1,0 +1,309 @@
+models:
+  - name: dataset_profile
+    description: >
+      Record counts per business date of the datasets the checks watch, in total (dimension
+      `total`, bin `all`) and by bin of each profiled dimension: payment format, currency,
+      amount band in the reporting currency and resolved accounts for payments; channel,
+      type and approval for cards; rule for alerts.
+    config:
+      meta: &recomputed
+        parity_exemption: >-
+          Recomputed from silver and gold, which the parallel run compares; the checks are
+          verified by the source's unit tests, ported with their inputs and expected rows (ADR 0009).
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [business_date, dataset, dimension, bin]
+            loaded_dates_only: true
+    columns:
+      - name: business_date
+        data_type: date
+        data_tests: [not_null]
+      - name: dataset
+        data_type: string
+        data_tests: [not_null]
+      - name: dimension
+        data_type: string
+        data_tests: [not_null]
+      - name: bin
+        data_type: string
+        description: The bin's value; `null` for records the dimension cannot bin.
+        data_tests: [not_null]
+      - name: record_count
+        data_type: bigint
+        data_tests: [not_null]
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz
+
+  - name: volume_check
+    description: >
+      Each dataset's record count on a business date against the median count of its
+      baseline dates. ANOMALY outside the dataset's ratio bounds; ACKNOWLEDGED when an entry
+      of acknowledged_anomaly covers the date; NO_BASELINE before enough history.
+    config:
+      meta: *recomputed
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [business_date, dataset]
+            loaded_dates_only: true
+    columns:
+      - name: business_date
+        data_type: date
+        data_tests: [not_null]
+      - name: dataset
+        data_type: string
+        data_tests: [not_null]
+      - name: record_count
+        data_type: bigint
+      - name: baseline_days
+        data_type: int
+      - name: baseline_median
+        data_type: double
+      - name: volume_ratio
+        data_type: double
+        description: Record count over the baseline median; null without a baseline or with a zero median.
+      - name: min_ratio
+        data_type: double
+      - name: max_ratio
+        data_type: double
+      - name: is_blocking
+        data_type: boolean
+        description: An anomaly on this dataset fails the audit and holds the publication.
+      - name: status
+        data_type: string
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [OK, NO_BASELINE, ANOMALY, ACKNOWLEDGED]
+          - not_in_loaded_dates:
+              name: no_blocking_volume_anomaly
+              arguments:
+                value: ANOMALY
+                condition: is_blocking
+          - not_in_loaded_dates:
+              name: no_volume_anomaly
+              arguments:
+                value: ANOMALY
+                condition: not is_blocking
+              config:
+                severity: warn
+      - name: acknowledgement
+        data_type: string
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz
+
+  - name: distribution_drift
+    description: >
+      Population stability index of each profiled dimension on a business date against its
+      baseline dates pooled. STABLE below 0.1, SHIFT below the drift threshold, DRIFT from
+      it; EMPTY without records; ACKNOWLEDGED and NO_BASELINE as in volume_check. A drift is
+      reported, not blocking: the data can be right while the business changes, and the rules
+      may need retuning.
+    config:
+      meta: *recomputed
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [business_date, dataset, dimension]
+            loaded_dates_only: true
+    columns:
+      - name: business_date
+        data_type: date
+        data_tests: [not_null]
+      - name: dataset
+        data_type: string
+        data_tests: [not_null]
+      - name: dimension
+        data_type: string
+        data_tests: [not_null]
+      - name: bins
+        data_type: int
+      - name: baseline_days
+        data_type: int
+      - name: stability_index
+        data_type: double
+      - name: status
+        data_type: string
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [STABLE, SHIFT, DRIFT, EMPTY, NO_BASELINE, ACKNOWLEDGED]
+          - not_in_loaded_dates:
+              arguments:
+                value: DRIFT
+              config:
+                severity: warn
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz
+
+  - name: layer_reconciliation
+    description: >
+      Records of each dated feed as its delivery's manifest declared them, in bronze and in
+      silver, with the amount control totals of bronze and silver (payments: amount paid;
+      cards: minor units). Every layer must hold every record, once.
+    config:
+      meta:
+        parity_exemption: >-
+          Has no source counterpart: it replaces the source's reconciliation with its own
+          ingestion log, which was retired (migration/waves.yaml).
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [business_date, feed]
+            loaded_dates_only: true
+    columns:
+      - name: business_date
+        data_type: date
+        data_tests: [not_null]
+      - name: feed
+        data_type: string
+        data_tests: [not_null]
+      - name: landed_records
+        data_type: bigint
+      - name: bronze_records
+        data_type: bigint
+      - name: silver_records
+        data_type: bigint
+      - name: bronze_amount
+        data_type: decimal(38,6)
+      - name: silver_amount
+        data_type: decimal(38,6)
+      - name: is_reconciled
+        data_type: boolean
+        data_tests:
+          - not_in_loaded_dates:
+              arguments:
+                value: false
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz
+
+unit_tests:
+  - name: volume_is_checked_against_the_median_of_unacknowledged_dates_of_the_same_kind
+    description: >
+      Two weekdays of history are needed. Friday 9th falls to a tenth of the median and is
+      an anomaly. Monday 12th and Tuesday 13th are low too, but acknowledged, and stay out of
+      the baseline: Wednesday 14th is compared with the 5th to 9th, not with the outage.
+      Saturday 10th has no weekend to compare with.
+    model: volume_check
+    overrides:
+      vars:
+        business_date: all
+    given:
+      - input: ref('dataset_profile')
+        format: sql
+        rows: |
+          select business_date, 'silver.payment_transfer' as dataset, 'total' as dimension, 'all' as bin,
+              cast(record_count as bigint) as record_count
+          from (values
+              (date '2022-09-05', 100), (date '2022-09-06', 110), (date '2022-09-07', 90), (date '2022-09-08', 100),
+              (date '2022-09-09', 10), (date '2022-09-10', 40), (date '2022-09-12', 12), (date '2022-09-13', 11),
+              (date '2022-09-14', 105)
+          ) as days (business_date, record_count)
+      - input: ref('acknowledged_anomaly')
+        format: sql
+        rows: |
+          select 'silver.payment_transfer' as dataset, date '2022-09-12' as from_date, date '2022-09-13' as to_date,
+              'planned outage' as reason, 'test' as acknowledged_by, date '2022-09-14' as acknowledged_on
+    expect:
+      rows:
+        - {business_date: 2022-09-05, baseline_days: 0, status: NO_BASELINE}
+        - {business_date: 2022-09-06, baseline_days: 1, status: NO_BASELINE}
+        - {business_date: 2022-09-07, baseline_days: 2, status: OK}
+        - {business_date: 2022-09-08, baseline_days: 3, status: OK}
+        - {business_date: 2022-09-09, baseline_days: 4, status: ANOMALY}
+        - {business_date: 2022-09-10, baseline_days: 0, status: NO_BASELINE}
+        - {business_date: 2022-09-12, baseline_days: 5, status: ACKNOWLEDGED}
+        - {business_date: 2022-09-13, baseline_days: 5, status: ACKNOWLEDGED}
+        - {business_date: 2022-09-14, baseline_days: 5, status: OK}
+
+  - name: distribution_drift_is_the_population_stability_index
+    description: >
+      An even ACH/Wire mix is stable; a 90/10 mix on Friday 9th has an index of
+      0.4 ln 1.8 + 0.4 ln 5 = 0.879, a drift.
+    model: distribution_drift
+    overrides:
+      vars:
+        business_date: all
+    given:
+      - input: ref('dataset_profile')
+        format: sql
+        rows: |
+          select date_add(date '2022-09-05', day) as business_date, 'silver.payment_transfer' as dataset,
+              dimension, bin, cast(record_count as bigint) as record_count
+          from (values
+              (0, 'total', 'all', 100), (0, 'payment_format', 'ACH', 50), (0, 'payment_format', 'Wire', 50),
+              (1, 'total', 'all', 100), (1, 'payment_format', 'ACH', 50), (1, 'payment_format', 'Wire', 50),
+              (2, 'total', 'all', 100), (2, 'payment_format', 'ACH', 50), (2, 'payment_format', 'Wire', 50),
+              (3, 'total', 'all', 100), (3, 'payment_format', 'ACH', 50), (3, 'payment_format', 'Wire', 50),
+              (4, 'total', 'all', 100), (4, 'payment_format', 'ACH', 90), (4, 'payment_format', 'Wire', 10)
+          ) as days (day, dimension, bin, record_count)
+      - input: ref('acknowledged_anomaly')
+        format: sql
+        rows: |
+          select * from (values ('none', date '2000-01-01', date '2000-01-01', 'none', 'none', date '2000-01-01'))
+              as acknowledged (dataset, from_date, to_date, reason, acknowledged_by, acknowledged_on)
+    expect:
+      rows:
+        - {business_date: 2022-09-05, status: NO_BASELINE}
+        - {business_date: 2022-09-06, status: NO_BASELINE}
+        - {business_date: 2022-09-07, status: STABLE}
+        - {business_date: 2022-09-08, status: STABLE}
+        - {business_date: 2022-09-09, status: DRIFT}
+
+  - name: layers_reconcile_on_records_and_amounts
+    description: >
+      Cards hold every record and amount from the manifest to silver, back in minor units at
+      the currency's exponent. A payment lost between bronze and silver breaks the payments
+      feed, on its count and on its amount.
+    model: layer_reconciliation
+    overrides:
+      vars:
+        business_date: "2022-09-05"
+    given:
+      - input: source('landing', 'delivery_log')
+        format: sql
+        rows: |
+          select 'd1' as delivery_id, '{"tables": {"payment_transfer": 2, "card_transaction": 2}}' as summary,
+              timestamp '2026-11-16 10:00:00' as logged_at
+      - input: source('bronze', 'payment_transfer')
+        format: sql
+        rows: |
+          select * from (values
+              (date '2022-09-05', 'd1', cast(100 as decimal(22, 6))),
+              (date '2022-09-05', 'd1', cast(25.5 as decimal(22, 6)))
+          ) as transfers (_delivery_date, _delivery_id, amount_paid)
+      - input: source('bronze', 'card_transaction')
+        format: sql
+        rows: |
+          select * from (values
+              (date '2022-09-05', 'd1', cast(1234 as bigint)),
+              (date '2022-09-05', 'd1', cast(7 as bigint))
+          ) as cards (_delivery_date, _delivery_id, amount_minor)
+      - input: ref('payment_transfer')
+        format: sql
+        rows: |
+          select date '2022-09-05' as business_date, cast(100 as decimal(22, 6)) as amount_paid
+      - input: ref('card_transaction')
+        format: sql
+        rows: |
+          select * from (values
+              (date '2022-09-05', 'MAD', cast(12.34 as decimal(22, 6))),
+              (date '2022-09-05', 'JPY', cast(7 as decimal(22, 6)))
+          ) as cards (business_date, currency, amount)
+      - input: ref('iso_currency')
+        format: sql
+        rows: |
+          select * from (values ('504', 'MAD', 2), ('392', 'JPY', 0)) as currencies (numeric_code, alpha_code, minor_unit)
+    expect:
+      rows:
+        - {feed: payments, landed_records: 2, bronze_records: 2, silver_records: 1, is_reconciled: false}
+        - {feed: cards, landed_records: 2, bronze_records: 2, silver_records: 2, is_reconciled: true}

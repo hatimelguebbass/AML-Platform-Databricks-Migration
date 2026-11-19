@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "unreconciled_card",
+  "position": {
+    "x": 648.0,
+    "y": 88,
+    "z": 6000,
+    "height": 96,
+    "width": 192.0,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Layer reconciliation"
+                    }
+                  },
+                  "Property": "Unreconciled feeds"
+                }
+              },
+              "queryRef": "Layer reconciliation.Unreconciled feeds"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

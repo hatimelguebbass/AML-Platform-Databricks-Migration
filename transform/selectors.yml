@@ -1,0 +1,37 @@
+# Selections of the daily job's tasks (resources/aml_daily.yml). Models select their tests
+# cautiously: a test that also reads a later layer runs with that layer, never before it is built.
+selectors:
+  - name: bronze_audit
+    description: Bronze slices of the business date against the ingestion's decisions.
+    definition:
+      method: path
+      value: tests/bronze
+
+  - name: silver
+    description: Reference lists and the silver layer, with their tests.
+    definition:
+      union:
+        - method: resource_type
+          value: seed
+        - method: path
+          value: models/silver
+          indirect_selection: cautious
+        - method: path
+          value: tests/silver
+
+  - name: gold
+    description: The gold layer and its tests, including the tests reading silver and gold together.
+    definition:
+      union:
+        - method: path
+          value: models/gold
+          indirect_selection: cautious
+        - method: path
+          value: tests/gold
+
+  - name: observability
+    description: Volume, drift and layer reconciliation checks of the business date, with their tests.
+    definition:
+      method: path
+      value: models/observability
+      indirect_selection: cautious

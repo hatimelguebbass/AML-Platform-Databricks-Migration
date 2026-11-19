@@ -1,0 +1,91 @@
+models:
+  - name: payment_transfer
+    description: >
+      Payments hub transfers with normalized bank ids, both accounts resolved to the core
+      banking, one slice per business date. A pipeline run replaces its business date.
+    columns:
+      - name: transfer_id
+        data_type: string
+        data_tests: [not_null, unique_in_loaded_dates]
+      - name: business_date
+        data_type: date
+        data_tests: [not_null]
+      - name: booked_at
+        data_type: timestamp_ntz
+      - name: originator_bank_id
+        data_type: string
+      - name: originator_account
+        data_type: string
+        databricks_tags: {classification: indirect}
+        column_mask: {function: governance.mask_pseudonym}
+      - name: originator_account_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+      - name: originator_customer_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+      - name: beneficiary_bank_id
+        data_type: string
+      - name: beneficiary_account
+        data_type: string
+        databricks_tags: {classification: indirect}
+        column_mask: {function: governance.mask_pseudonym}
+      - name: beneficiary_account_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+      - name: beneficiary_customer_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+      - name: amount_paid
+        data_type: decimal(22,6)
+      - name: payment_currency
+        data_type: string
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('fx_rate')
+                field: currency
+      - name: amount_received
+        data_type: decimal(22,6)
+      - name: receiving_currency
+        data_type: string
+      - name: payment_format
+        data_type: string
+      - name: is_cross_currency
+        data_type: boolean
+      - name: is_same_customer
+        description: Both accounts belong to the same customer record.
+        data_type: boolean
+      - name: _source_file
+        data_type: string
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz
+
+  - name: fx_rate
+    description: >
+      Rate from each currency to the reporting currency, as the payments hub applies it on
+      its cross-currency transfers.
+    columns:
+      - name: currency
+        data_type: string
+        data_tests: [unique, not_null]
+      - name: rate_to_reporting
+        description: Units of the reporting currency for one unit of the currency.
+        data_type: double
+        data_tests: [not_null]
+      - name: relative_spread
+        description: Spread between the 5th and 95th percentile of the observed rates, relative to the rate.
+        data_type: double
+        data_tests:
+          - at_most:
+              arguments:
+                max_value: 0.001
+      - name: quotes
+        description: Cross-currency transfers the rate was read from; 0 for the reporting currency.
+        data_type: bigint
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz

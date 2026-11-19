@@ -1,0 +1,94 @@
+[project]
+name = "lakemig"
+version = "0.1.0"
+description = "Migration of the on-premises AML lakehouse to Azure Databricks"
+readme = "README.md"
+requires-python = ">=3.12"
+# The jobs run on Databricks serverless compute, which provides PySpark: the wheel itself needs nothing else.
+dependencies = []
+
+[project.optional-dependencies]
+# Assessment tooling that runs next to the source platform, never on Databricks.
+assessment = [
+    "httpx>=0.28,<1",
+    "pyyaml>=6.0,<7",
+    "sqlglot==30.31.0",
+    "trino>=0.335,<1",
+]
+# On-premises export of the allowed tables and their transfer to the landing volume (ADR 0003).
+export = [
+    "databricks-sdk==0.157.0",
+    "pyarrow==26.0.0",
+    "pyiceberg[pyarrow]==0.12.0",
+    "pyyaml>=6.0,<7",
+]
+
+[project.scripts]
+lakemig = "lakemig.cli:main"
+lakemig-platform-check = "lakemig.platform.check:main"
+lakemig-ingest = "lakemig.ingestion.bronze:main"
+lakemig-open-staging = "lakemig.publication.job:open_staging"
+lakemig-publish = "lakemig.publication.job:publish"
+
+[dependency-groups]
+dev = [
+    "jsonschema>=4.23,<5",
+    "mypy>=1.16",
+    # In-memory Iceberg catalog of the export tests.
+    "pyiceberg[sql-sqlite]==0.12.0",
+    "pyspark-client==4.1.4",
+    "pytest>=8.3",
+    "ruff>=0.12",
+    "types-jsonschema>=4.23",
+    "types-pyyaml>=6.0",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lakemig"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "RUF", "PT"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+# Every statement is SQL text: identifiers pass identifier(), values literal() or a date's isoformat().
+"src/lakemig/publication/wap.py" = ["S608"]
+# Identifiers come from the spec and the information schema, quoted; values are dates and hex buckets.
+"src/lakemig/parity/{fingerprint,run}.py" = ["S608"]
+"tests/integration/test_parity_canonical.py" = ["S608"]
+
+[tool.mypy]
+strict = true
+files = ["src", "tests"]
+
+[[tool.mypy.overrides]]
+# The Spark Connect client ships the PySpark API with inline annotations but without a py.typed marker.
+module = ["pyspark", "pyspark.*"]
+follow_untyped_imports = true
+
+[[tool.mypy.overrides]]
+module = ["trino", "trino.*", "pyarrow", "pyarrow.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# The Trino client's connect() is not annotated.
+module = ["lakemig.cli"]
+disallow_untyped_calls = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "integration: needs the Databricks dev workspace (DATABRICKS_HOST and DATABRICKS_TOKEN)",
+]

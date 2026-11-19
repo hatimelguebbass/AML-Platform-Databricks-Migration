@@ -1,0 +1,101 @@
+# What crosses the boundary, column by column (ADR 0003). `lakemig assess` checks this file against
+# the inventory, the classification and the waves; `docs/assessment/boundary.md` renders it.
+#
+# Columns classified `none` cross as they are unless dropped here. `direct` columns never cross and
+# are never listed. Every `indirect` column needs one treatment; there is no default:
+#   keep          internal key or attribute the cloud models need; it means nothing outside the bank
+#   pseudonymize  identifier that means something outside the bank (account, card): keyed HMAC whose
+#                 key stays on premises; one namespace gives one pseudonym per value in every table
+#   year          date reduced to its year, under the name given by `as`
+#   drop          not needed by any cloud model
+#
+# Selections: `business_date: <column>` (rows of the date), `capture_runs: <target_table>` (change
+# events written by the capture runs delivered with the date), `capture_runs` (those runs' records
+# in audit.change_batch) or `snapshot` (the whole table at the export's source commit). `order_by`
+# fixes the row order, which makes the files reproducible.
+
+# The first business date of the migration's deliveries. A capture run belongs to the date the
+# daily pipeline gave it; the initial snapshot of the core banking, and any capture made before the
+# daily runs began, carry no date and are delivered once, with this date.
+first_business_date: 2022-09-01
+
+tables:
+  bronze.corebanking_customer:
+    selection: {capture_runs: bronze.corebanking_customer}
+    order_by: [_kafka_topic, _kafka_partition, _kafka_offset]
+    columns:
+      customer_id: keep
+      gender: keep
+      birth_date: {treatment: year, as: birth_year}
+      nationality: keep
+      residence_country: keep
+      occupation: keep
+      city: keep
+      postal_code: drop
+      is_pep: keep
+
+  bronze.corebanking_account:
+    selection: {capture_runs: bronze.corebanking_account}
+    order_by: [_kafka_topic, _kafka_partition, _kafka_offset]
+    columns:
+      account_id: keep
+      customer_id: keep
+      account_number: {treatment: pseudonymize, namespace: account_number}
+      rib: drop
+
+  bronze.corebanking_card:
+    selection: {capture_runs: bronze.corebanking_card}
+    order_by: [_kafka_topic, _kafka_partition, _kafka_offset]
+    columns:
+      card_id: keep
+      account_id: keep
+      card_token: {treatment: pseudonymize, namespace: card_token}
+      pan_last4: drop
+
+  audit.change_batch:
+    selection: capture_runs
+    order_by: [run_id, topic, kafka_partition]
+
+  silver.party_member:
+    selection: snapshot
+    order_by: [customer_id]
+    columns:
+      customer_id: keep
+      party_id: keep
+
+  bronze.payment_transfer:
+    selection: {business_date: _business_date}
+    order_by: [transfer_id]
+    columns:
+      # Joined to the account history on the account number: one namespace keeps the join exact.
+      originator_account: {treatment: pseudonymize, namespace: account_number}
+      beneficiary_account: {treatment: pseudonymize, namespace: account_number}
+
+  bronze.card_transaction:
+    selection: {business_date: _business_date}
+    order_by: [txn_ref]
+    columns:
+      card_token: {treatment: pseudonymize, namespace: card_token}
+      merchant_name: keep
+
+  gold.sanctions_hit:
+    selection: snapshot
+    order_by: [hit_id]
+    columns:
+      customer_id: keep
+      party_id: keep
+
+gate:
+  # The gate looks for these full names, read at the export's source commit, in every string value.
+  known_names:
+    table: restricted.customer_identity
+    names:
+      - [first_name, last_name]
+      - [legal_name]
+  exemptions:
+    - table: bronze.card_transaction
+      column: merchant_id
+      detector: passport
+      reason: >-
+        Card acceptor identifier assigned by the processor (M and seven digits, the shape of a
+        passport number); it identifies a shop, not a person.

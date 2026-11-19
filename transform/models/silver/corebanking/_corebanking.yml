@@ -1,0 +1,206 @@
+models:
+  - name: customer_history
+    description: >
+      Type 2 history of the customer master at daily grain, analytical attributes only.
+      A version holds from valid_from to the day before valid_to; the current version has
+      no valid_to. Direct identifiers stay on premises.
+    data_tests:
+      - valid_history:
+          arguments:
+            key: customer_id
+    columns:
+      - name: customer_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+        data_tests: [not_null]
+      - name: customer_type
+        data_type: string
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [PERSON, ORGANIZATION]
+      - name: gender
+        data_type: string
+        databricks_tags: {classification: indirect}
+      - name: birth_year
+        databricks_tags: {classification: indirect}
+        description: Year of birth; the full date stays on premises.
+        data_type: bigint
+      - name: legal_form
+        data_type: string
+      - name: incorporation_year
+        data_type: bigint
+      - name: nationality
+        data_type: string
+        databricks_tags: {classification: indirect}
+      - name: residence_country
+        data_type: string
+        databricks_tags: {classification: indirect}
+        data_tests: [not_null]
+      - name: city
+        data_type: string
+        databricks_tags: {classification: indirect}
+        data_tests: [not_null]
+      - name: occupation
+        data_type: string
+        databricks_tags: {classification: indirect}
+      - name: risk_rating
+        data_type: string
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [LOW, MEDIUM, HIGH]
+      - name: is_pep
+        data_type: boolean
+        databricks_tags: {classification: indirect}
+        data_tests: [not_null]
+      - name: customer_since
+        data_type: date
+      - name: valid_from
+        description: Business date from which the version holds, as of the end of that day.
+        data_type: date
+        data_tests: [not_null]
+      - name: valid_to
+        description: Business date the next version or the deletion took effect; null while current.
+        data_type: date
+      - name: is_current
+        data_type: boolean
+      - name: recorded_at
+        description: Commit time of the change in the core banking.
+        data_type: timestamp
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz
+
+  - name: account_history
+    description: Type 2 history of core banking accounts at daily grain. Bank ids are normalized.
+    data_tests:
+      - valid_history:
+          arguments:
+            key: account_id
+    columns:
+      - name: account_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+        data_tests: [not_null]
+      - name: customer_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+        data_tests: [not_null]
+      - name: bank_id
+        data_type: string
+        data_tests: [not_null]
+      - name: account_number
+        data_type: string
+        databricks_tags: {classification: indirect}
+        column_mask: {function: governance.mask_pseudonym}
+        data_tests: [not_null]
+      - name: account_type
+        data_type: string
+      - name: currency
+        data_type: string
+      - name: status
+        data_type: string
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [ACTIVE, DORMANT, CLOSED]
+      - name: opened_on
+        data_type: date
+      - name: closed_on
+        data_type: date
+      - name: valid_from
+        data_type: date
+        data_tests: [not_null]
+      - name: valid_to
+        data_type: date
+      - name: is_current
+        data_type: boolean
+      - name: recorded_at
+        data_type: timestamp
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz
+
+  - name: card_history
+    description: Type 2 history of payment cards at daily grain, without the PAN digits.
+    data_tests:
+      - valid_history:
+          arguments:
+            key: card_id
+    columns:
+      - name: card_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+        data_tests: [not_null]
+      - name: account_id
+        data_type: bigint
+        databricks_tags: {classification: indirect}
+        data_tests: [not_null]
+      - name: card_token
+        data_type: string
+        databricks_tags: {classification: indirect}
+        column_mask: {function: governance.mask_pseudonym}
+        data_tests: [not_null]
+      - name: scheme
+        data_type: string
+      - name: product
+        data_type: string
+      - name: status
+        data_type: string
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [ACTIVE, BLOCKED, EXPIRED]
+      - name: issued_on
+        data_type: date
+      - name: expires_on
+        data_type: date
+      - name: valid_from
+        data_type: date
+        data_tests: [not_null]
+      - name: valid_to
+        data_type: date
+      - name: is_current
+        data_type: boolean
+      - name: recorded_at
+        data_type: timestamp
+      - name: _pipeline_run_id
+        data_type: string
+      - name: _loaded_at
+        data_type: timestamp_ntz
+
+unit_tests:
+  - name: customer_history_versions_follow_business_dates
+    description: >
+      Snapshot rows date from their last update, a capture dates from its run's business
+      date, a day keeps its last state, repeated snapshots and untracked changes add no
+      version, a deletion closes the history and a row born and deleted the same day has none.
+    model: customer_history
+    given:
+      - input: source('bronze', 'change_batch')
+        rows:
+          - {run_id: "run-0905#1", topic: corebanking.core.customer, kafka_partition: 0, business_date: 2022-09-05}
+          - {run_id: "run-0907#1", topic: corebanking.core.customer, kafka_partition: 0, business_date: 2022-09-07}
+          - {run_id: "run-0907#1", topic: corebanking.core.customer, kafka_partition: 1, business_date: 2022-09-07}
+      - input: source('bronze', 'corebanking_customer')
+        rows:
+          - {customer_id: 1, customer_type: PERSON, risk_rating: LOW, city: Rabat, is_pep: false, updated_at: "2020-01-01 10:00:00", _op: r, _kafka_topic: corebanking.core.customer, _kafka_partition: 0, _kafka_offset: 10, _ingest_run_id: snapshot, _source_committed_at: "2026-11-12 09:00:00"}
+          - {customer_id: 1, customer_type: PERSON, risk_rating: LOW, city: Rabat, is_pep: false, updated_at: "2020-01-01 10:00:00", _op: r, _kafka_topic: corebanking.core.customer, _kafka_partition: 0, _kafka_offset: 11, _ingest_run_id: snapshot, _source_committed_at: "2026-11-12 09:05:00"}
+          - {customer_id: 1, customer_type: PERSON, risk_rating: MEDIUM, city: Rabat, is_pep: false, updated_at: "2026-11-12 10:00:00", _op: u, _kafka_topic: corebanking.core.customer, _kafka_partition: 0, _kafka_offset: 20, _ingest_run_id: "run-0905#1", _source_committed_at: "2026-11-12 10:00:00"}
+          - {customer_id: 1, customer_type: PERSON, risk_rating: MEDIUM, city: Rabat, is_pep: false, updated_at: "2026-11-12 11:00:00", _op: u, _kafka_topic: corebanking.core.customer, _kafka_partition: 0, _kafka_offset: 30, _ingest_run_id: "run-0907#1", _source_committed_at: "2026-11-12 11:00:00"}
+          - {customer_id: 1, customer_type: PERSON, risk_rating: MEDIUM, city: Tanger, is_pep: false, updated_at: "2026-11-12 11:10:00", _op: u, _kafka_topic: corebanking.core.customer, _kafka_partition: 0, _kafka_offset: 31, _ingest_run_id: "run-0907#1", _source_committed_at: "2026-11-12 11:10:00"}
+          - {customer_id: 1, customer_type: PERSON, risk_rating: MEDIUM, city: Fes, is_pep: false, updated_at: "2026-11-12 11:20:00", _op: u, _kafka_topic: corebanking.core.customer, _kafka_partition: 0, _kafka_offset: 32, _ingest_run_id: "run-0907#1", _source_committed_at: "2026-11-12 11:20:00"}
+          - {customer_id: 2, customer_type: PERSON, risk_rating: LOW, city: Casablanca, is_pep: false, updated_at: "2019-05-01 08:00:00", _op: r, _kafka_topic: corebanking.core.customer, _kafka_partition: 1, _kafka_offset: 5, _ingest_run_id: snapshot, _source_committed_at: "2026-11-12 09:00:00"}
+          - {customer_id: 2, customer_type: PERSON, risk_rating: LOW, city: Casablanca, is_pep: false, updated_at: "2019-05-01 08:00:00", _op: d, _kafka_topic: corebanking.core.customer, _kafka_partition: 1, _kafka_offset: 6, _ingest_run_id: "run-0907#1", _source_committed_at: "2026-11-12 12:00:00"}
+          - {customer_id: 3, customer_type: PERSON, risk_rating: LOW, city: Agadir, is_pep: false, updated_at: "2026-11-12 13:00:00", _op: c, _kafka_topic: corebanking.core.customer, _kafka_partition: 1, _kafka_offset: 7, _ingest_run_id: "run-0907#1", _source_committed_at: "2026-11-12 13:00:00"}
+          - {customer_id: 3, customer_type: PERSON, risk_rating: LOW, city: Agadir, is_pep: false, updated_at: "2026-11-12 13:00:00", _op: d, _kafka_topic: corebanking.core.customer, _kafka_partition: 1, _kafka_offset: 8, _ingest_run_id: "run-0907#1", _source_committed_at: "2026-11-12 13:30:00"}
+    expect:
+      rows:
+        - {customer_id: 1, risk_rating: LOW, city: Rabat, valid_from: 2020-01-01, valid_to: 2022-09-05, is_current: false}
+        - {customer_id: 1, risk_rating: MEDIUM, city: Rabat, valid_from: 2022-09-05, valid_to: 2022-09-07, is_current: false}
+        - {customer_id: 1, risk_rating: MEDIUM, city: Fes, valid_from: 2022-09-07, valid_to: null, is_current: true}
+        - {customer_id: 2, risk_rating: LOW, city: Casablanca, valid_from: 2019-05-01, valid_to: 2022-09-07, is_current: false}

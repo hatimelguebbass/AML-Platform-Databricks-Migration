@@ -1,0 +1,31 @@
+# Reads that liquid clustering of the large silver tables is meant to speed up, and the pipeline's
+# own read path it must not slow down (ADR 0009). `make benchmark LABEL=...` runs each query on the
+# SQL warehouse, never from the result cache, and records what the warehouse read; the keys are
+# ordinary entities of the published data (12 records each), not the busiest ones.
+repetitions: 3
+
+tables:
+  - silver.payment_transfer
+  - silver.card_transaction
+
+queries:
+  - name: account_outgoing
+    purpose: An investigator lists what one account paid, across every business date.
+    sql: >-
+      SELECT count(*), sum(amount_paid) FROM {catalog}.silver.payment_transfer
+      WHERE originator_account_id = 76
+  - name: account_incoming
+    purpose: The same investigation on the credited side, which the clustering keys leave out.
+    sql: >-
+      SELECT count(*), sum(amount_paid) FROM {catalog}.silver.payment_transfer
+      WHERE beneficiary_account_id = 8
+  - name: card_history
+    purpose: An investigator lists one card's transactions, across every business date.
+    sql: >-
+      SELECT count(*), sum(amount) FROM {catalog}.silver.card_transaction
+      WHERE card_id = 11
+  - name: daily_slice
+    purpose: The pipeline reads one business date of payments (rules, observability).
+    sql: >-
+      SELECT count(*), sum(amount_paid) FROM {catalog}.silver.payment_transfer
+      WHERE business_date = DATE'2022-09-05'

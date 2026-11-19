@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "last_date_card",
+  "position": {
+    "x": 24.0,
+    "y": 88,
+    "z": 3000,
+    "height": 96,
+    "width": 192.0,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Volume check"
+                    }
+                  },
+                  "Property": "Last business date"
+                }
+              },
+              "queryRef": "Volume check.Last business date"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

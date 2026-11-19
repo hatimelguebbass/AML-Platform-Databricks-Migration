@@ -1,0 +1,135 @@
+name: aml
+version: "1.0.0"
+config-version: 2
+profile: aml
+require-dbt-version: [">=1.11.0", "<1.12.0"]
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+clean-targets: ["target"]
+
+flags:
+  # Creates each table with its full column definition (types, comments, tags and masks) before
+  # loading it: a masked column is never readable unmasked, not even between two statements.
+  use_materialization_v2: true
+
+# Masks must exist before the first model that references them is created.
+on-run-start:
+  - "{{ create_policy_functions() }}"
+
+vars:
+  # The business date a pipeline run loads (YYYY-MM-DD). Dated models replace only that
+  # date; with `all` (or unset) they rebuild every date present in bronze.
+  business_date: null
+  # The orchestrator run, recorded on every row written; defaults to the dbt invocation.
+  # The publication checks it to publish only what the run being published built.
+  pipeline_run: null
+  # Appended to every layer's schema: dbt writes the staging copy of a layer, never the layer
+  # readers see, which only the publication writes (ADR 0006).
+  staging_suffix: _staging
+  # Schema of the policy functions (column masks) applied by the models.
+  governance_schema: governance
+  # Groups the masks let through. The pipeline group builds the tables, so it reads every value;
+  # the migration group compares them with the source's pseudonymized values (ADR 0008).
+  privileged_groups: [aml-compliance, aml-pipeline, aml-migration]
+  # Amounts the AML rules compare are converted to this currency at the rates the payments
+  # hub applies (silver.fx_rate).
+  reporting_currency: USD
+  # Jurisdiction of the bank: its customers are not high risk for living in it.
+  home_country: MA
+  # Transaction monitoring rules, unchanged from the source platform (its ADR 0009): the
+  # parity of the parallel run requires the same parameters. The rule catalogue
+  # (gold.aml_rule) is rendered from this block, so what runs is what is documented.
+  aml_rules:
+    fan_in:
+      id: AML-001
+      name: Fan-in
+      typology: Gathering of funds
+      description: An account is credited by at least min_counterparties distinct accounts in one business day, in the payment formats listed.
+      parameters: {payment_formats: [ACH], min_counterparties: 3}
+    fan_out:
+      id: AML-002
+      name: Fan-out
+      typology: Scattering of funds
+      description: An account pays at least min_counterparties distinct accounts in one business day, in the payment formats listed.
+      parameters: {payment_formats: [ACH], min_counterparties: 5}
+    pass_through:
+      id: AML-003
+      name: Pass-through account
+      typology: Money mule, layering
+      description: >-
+        An account forwards a credit to a third party within window_hours, keeping at most
+        1 - min_forwarded_ratio of it, in the payment formats listed.
+      parameters: {payment_formats: [ACH], window_hours: 72, min_forwarded_ratio: 0.9}
+    round_trip:
+      id: AML-004
+      name: Round trip
+      typology: Layering
+      description: Funds an account sent come back from the same counterparty within window_hours.
+      parameters: {window_hours: 72}
+    volume_spike:
+      id: AML-005
+      name: Outgoing volume spike
+      typology: Unexpected activity
+      description: >-
+        An account pays out at least min_amount and at least min_multiple times its average
+        daily outflow of the previous lookback_days days, in which it paid out on at least
+        min_active_days days.
+      parameters: {lookback_days: 7, min_active_days: 2, min_multiple: 10, min_amount: 10000}
+    structuring:
+      id: AML-006
+      name: Structuring
+      typology: Threshold avoidance
+      description: >-
+        An account makes at least min_transfers payments in one business day, each between
+        band_ratio and 100% of threshold, in the reporting currency.
+      parameters: {threshold: 10000, band_ratio: 0.9, min_transfers: 2}
+    high_risk_jurisdiction:
+      id: AML-007
+      name: High-risk jurisdiction
+      typology: Geographic risk
+      description: >-
+        A customer resident in or national of a jurisdiction on a FATF list in force moves at
+        least min_amount through an account in one business day.
+      parameters: {min_amount: 10000}
+  # Data observability (wave 4), the source's settings unchanged (its ADR 0010). Each check
+  # compares the loaded date with its baseline: the previous baseline_days loaded dates of the
+  # dataset of the same kind (weekday or weekend) that are not acknowledged as anomalous (seed
+  # acknowledged_anomaly), and needs min_baseline_days of them.
+  observability:
+    baseline_days: 5
+    min_baseline_days: 2
+    # A day's record count outside [min_ratio, max_ratio] times the baseline median is an
+    # anomaly; a blocking one fails the audit and holds the publication until fixed or acknowledged.
+    volume:
+      silver.payment_transfer: {min_ratio: 0.5, max_ratio: 2.0, blocking: true}
+      silver.card_transaction: {min_ratio: 0.5, max_ratio: 2.0, blocking: true}
+      gold.aml_alert: {min_ratio: 0.25, max_ratio: 4.0, blocking: false}
+    # Population stability index from which a profiled dimension has drifted.
+    drift_threshold: 0.25
+
+seeds:
+  aml:
+    +schema: reference
+
+models:
+  aml:
+    +file_format: delta
+    +on_schema_change: fail
+    +contract:
+      enforced: true
+    silver:
+      +schema: silver
+      +materialized: table
+    gold:
+      +schema: gold
+      +materialized: table
+      rules:
+        # Inlined into the alert models: one query per run, nothing intermediate to store.
+        +materialized: ephemeral
+        +contract:
+          enforced: false
+    observability:
+      +schema: observability

@@ -1,0 +1,299 @@
+{
+  "format_version": 1,
+  "measured_at": "2026-11-18T21:19:43+00:00",
+  "catalog": "aml_prod",
+  "window": [
+    "2026-11-15",
+    "2026-11-18"
+  ],
+  "usage": [
+    {
+      "product": "SQL",
+      "sku": "PREMIUM_SERVERLESS_SQL_COMPUTE_FRANCE_CENTRAL",
+      "unit": "DBU",
+      "quantity": 6.102157777777777,
+      "list_cost": 5.552963,
+      "first_day": "2026-11-15",
+      "last_day": "2026-11-18"
+    },
+    {
+      "product": "JOBS",
+      "sku": "PREMIUM_JOBS_SERVERLESS_COMPUTE_FRANCE_CENTRAL",
+      "unit": "DBU",
+      "quantity": 8.685722723123899,
+      "list_cost": 4.342857,
+      "first_day": "2026-11-16",
+      "last_day": "2026-11-17"
+    },
+    {
+      "product": "PREDICTIVE_OPTIMIZATION",
+      "sku": "PREMIUM_JOBS_SERVERLESS_COMPUTE_FRANCE_CENTRAL",
+      "unit": "DBU",
+      "quantity": 1.7984899568055557,
+      "list_cost": 0.899247,
+      "first_day": "2026-11-16",
+      "last_day": "2026-11-17"
+    },
+    {
+      "product": "DEFAULT_STORAGE",
+      "sku": "PREMIUM_DATABRICKS_STORAGE_FRANCE_CENTRAL",
+      "unit": "DSU",
+      "quantity": 4.344750229530924,
+      "list_cost": 0.104276,
+      "first_day": "2026-11-15",
+      "last_day": "2026-11-18"
+    },
+    {
+      "product": "NETWORKING",
+      "sku": "PUBLIC_CONNECTIVITY_DATA_PROCESSED",
+      "unit": "GB",
+      "quantity": 0.20890453,
+      "list_cost": 0.009387,
+      "first_day": "2026-11-15",
+      "last_day": "2026-11-18"
+    },
+    {
+      "product": "NETWORKING",
+      "sku": "INTERNET_EGRESS_EUROPE",
+      "unit": "GB",
+      "quantity": 0.000620688,
+      "list_cost": 4.7e-05,
+      "first_day": "2026-11-15",
+      "last_day": "2026-11-18"
+    },
+    {
+      "product": "NETWORKING",
+      "sku": "INTER_REGION_EGRESS_FRANCE_CENTRAL",
+      "unit": "GB",
+      "quantity": 2.846e-06,
+      "list_cost": 0.0,
+      "first_day": "2026-11-17",
+      "last_day": "2026-11-17"
+    }
+  ],
+  "jobs_cost": [
+    {
+      "job": "aml_daily",
+      "dbus": 3.807101,
+      "list_cost": 1.903548
+    },
+    {
+      "job": "ingest_bronze",
+      "dbus": 3.022802,
+      "list_cost": 1.511403
+    },
+    {
+      "job": "platform_check",
+      "dbus": 1.85582,
+      "list_cost": 0.927906
+    }
+  ],
+  "azure": [
+    {
+      "service": "Azure Databricks",
+      "cost": 10.898906,
+      "currency": "USD"
+    },
+    {
+      "service": "Storage",
+      "cost": 0.111157,
+      "currency": "USD"
+    },
+    {
+      "service": "NAT Gateway",
+      "cost": 0.009401,
+      "currency": "USD"
+    },
+    {
+      "service": "Bandwidth",
+      "cost": 0.0,
+      "currency": "USD"
+    }
+  ],
+  "runs": [
+    {
+      "job": "aml_daily",
+      "scope": "every date",
+      "runs": 3,
+      "succeeded": 3,
+      "failed": 0,
+      "median_seconds": 796,
+      "max_seconds": 1003
+    },
+    {
+      "job": "ingest_bronze",
+      "scope": "",
+      "runs": 3,
+      "succeeded": 1,
+      "failed": 2,
+      "median_seconds": 459,
+      "max_seconds": 459
+    },
+    {
+      "job": "ingest_bronze",
+      "scope": "every date",
+      "runs": 3,
+      "succeeded": 3,
+      "failed": 0,
+      "median_seconds": 62,
+      "max_seconds": 415
+    },
+    {
+      "job": "platform_check",
+      "scope": "",
+      "runs": 10,
+      "succeeded": 10,
+      "failed": 0,
+      "median_seconds": 50,
+      "max_seconds": 64
+    }
+  ],
+  "lineage": {
+    "expected": 59,
+    "observed": 59,
+    "missing": [],
+    "undeclared": []
+  },
+  "access": [
+    {
+      "actor": "Databricks",
+      "kind": "read",
+      "events": 201,
+      "denied": 0
+    },
+    {
+      "actor": "Databricks",
+      "kind": "write",
+      "events": 72,
+      "denied": 1
+    },
+    {
+      "actor": "deployer service principal (aml-pipeline)",
+      "kind": "permissions",
+      "events": 11,
+      "denied": 0
+    },
+    {
+      "actor": "deployer service principal (aml-pipeline)",
+      "kind": "read",
+      "events": 1956,
+      "denied": 0
+    },
+    {
+      "actor": "deployer service principal (aml-pipeline)",
+      "kind": "write",
+      "events": 579,
+      "denied": 0
+    },
+    {
+      "actor": "operator",
+      "kind": "permissions",
+      "events": 4,
+      "denied": 0
+    },
+    {
+      "actor": "operator",
+      "kind": "read",
+      "events": 81,
+      "denied": 0
+    },
+    {
+      "actor": "operator",
+      "kind": "write",
+      "events": 40,
+      "denied": 0
+    }
+  ],
+  "permission_changes": [
+    {
+      "at": "2026-11-15T13:44:18.056Z",
+      "actor": "operator",
+      "securable": "aml_prod",
+      "changes": ""
+    },
+    {
+      "at": "2026-11-15T13:44:18.624Z",
+      "actor": "operator",
+      "securable": "aml_prod",
+      "changes": ""
+    },
+    {
+      "at": "2026-11-15T13:44:19.104Z",
+      "actor": "operator",
+      "securable": "aml_prod",
+      "changes": "aml-analysts: +USE_CATALOG; aml-compliance: +USE_CATALOG; aml-pipeline: +CREATE_SCHEMA,USE_CATALOG; aml-reporting: +USE_CATALOG"
+    },
+    {
+      "at": "2026-11-16T02:21:00.120Z",
+      "actor": "deployer service principal (aml-pipeline)",
+      "securable": "aml_prod.gold",
+      "changes": "aml-compliance: +SELECT,USE_SCHEMA -ALL_PRIVILEGES; aml-reporting: +SELECT,USE_SCHEMA -ALL_PRIVILEGES"
+    },
+    {
+      "at": "2026-11-16T02:21:00.147Z",
+      "actor": "deployer service principal (aml-pipeline)",
+      "securable": "aml_prod.reference",
+      "changes": "aml-compliance: +SELECT,USE_SCHEMA -ALL_PRIVILEGES; aml-analysts: +SELECT,USE_SCHEMA -ALL_PRIVILEGES; aml-reporting: +SELECT,USE_SCHEMA -ALL_PRIVILEGES"
+    },
+    {
+      "at": "2026-11-16T02:21:00.318Z",
+      "actor": "deployer service principal (aml-pipeline)",
+      "securable": "aml_prod.silver",
+      "changes": "aml-compliance: +SELECT,USE_SCHEMA -ALL_PRIVILEGES; aml-analysts: +SELECT,USE_SCHEMA -ALL_PRIVILEGES; aml-reporting: +SELECT,USE_SCHEMA -ALL_PRIVILEGES"
+    },
+    {
+      "at": "2026-11-16T14:14:48.446Z",
+      "actor": "operator",
+      "securable": "aml_prod",
+      "changes": "aml-migration: +USE_CATALOG"
+    },
+    {
+      "at": "2026-11-16T14:31:37.410Z",
+      "actor": "deployer service principal (aml-pipeline)",
+      "securable": "aml_prod.gold",
+      "changes": "aml-compliance: +SELECT,USE_SCHEMA -ALL_PRIVILEGES; aml-reporting: +SELECT,USE_SCHEMA -ALL_PRIVILEGES; aml-migration: +SELECT,USE_SCHEMA -ALL_PRIVILEGES"
+    },
+    {
+      "at": "2026-11-16T14:31:37.416Z",
+      "actor": "deployer service principal (aml-pipeline)",
+      "securable": "aml_prod.landing",
+      "changes": "aml-migration: +USE_SCHEMA -ALL_PRIVILEGES"
+    },
+    {
+      "at": "2026-11-16T14:31:37.425Z",
+      "actor": "deployer service principal (aml-pipeline)",
+      "securable": "aml_prod.observability",
+      "changes": "aml-migration: +SELECT,USE_SCHEMA -ALL_PRIVILEGES"
+    },
+    {
+      "at": "2026-11-16T14:31:37.492Z",
+      "actor": "deployer service principal (aml-pipeline)",
+      "securable": "aml_prod.silver",
+      "changes": "aml-migration: +SELECT,USE_SCHEMA -ALL_PRIVILEGES; aml-compliance: +SELECT,USE_SCHEMA -ALL_PRIVILEGES; aml-analysts: +SELECT,USE_SCHEMA -ALL_PRIVILEGES; aml-reporting: +SELECT,USE_SCHEMA -ALL_PRIVILEGES"
+    },
+    {
+      "at": "2026-11-16T14:31:37.580Z",
+      "actor": "deployer service principal (aml-pipeline)",
+      "securable": "aml_prod.landing.deliveries",
+      "changes": "aml-migration: +READ_VOLUME,WRITE_VOLUME -ALL_PRIVILEGES"
+    },
+    {
+      "at": "2026-11-16T15:08:10.392Z",
+      "actor": "deployer service principal (aml-pipeline)",
+      "securable": "aml_prod.governance",
+      "changes": "aml-migration: +EXECUTE,USE_SCHEMA -ALL_PRIVILEGES"
+    },
+    {
+      "at": "2026-11-16T19:48:47.782Z",
+      "actor": "deployer service principal (aml-pipeline)",
+      "securable": "aml_prod.observability",
+      "changes": "aml-migration: +SELECT,USE_SCHEMA -ALL_PRIVILEGES; aml-compliance: +SELECT,USE_SCHEMA -ALL_PRIVILEGES; aml-analysts: +SELECT,USE_SCHEMA -ALL_PRIVILEGES; aml-reporting: +SELECT,USE_SCHEMA -ALL_PRIVILEGES"
+    },
+    {
+      "at": "2026-11-17T01:40:08.479Z",
+      "actor": "deployer service principal (aml-pipeline)",
+      "securable": "aml_prod.landing",
+      "changes": "aml-migration: +SELECT,USE_SCHEMA -ALL_PRIVILEGES"
+    }
+  ]
+}

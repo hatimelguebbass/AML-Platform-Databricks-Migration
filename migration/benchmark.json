@@ -1,0 +1,119 @@
+{
+  "format_version": 1,
+  "runs": [
+    {
+      "label": "unclustered",
+      "measured_at": "2026-11-16T19:05:14+00:00",
+      "catalog": "aml_prod",
+      "engine_version": "Databricks SQL 2026.45",
+      "layouts": [
+        {
+          "table": "silver.payment_transfer",
+          "clustering": [],
+          "files": 4,
+          "bytes": 205998504
+        },
+        {
+          "table": "silver.card_transaction",
+          "clustering": [],
+          "files": 1,
+          "bytes": 96258982
+        }
+      ],
+      "measurements": [
+        {
+          "query": "account_outgoing",
+          "rows_read": 12,
+          "files_read": 4,
+          "files_pruned": 0,
+          "bytes_read": 27497577,
+          "duration_ms": 677
+        },
+        {
+          "query": "account_incoming",
+          "rows_read": 12,
+          "files_read": 3,
+          "files_pruned": 1,
+          "bytes_read": 24330470,
+          "duration_ms": 663
+        },
+        {
+          "query": "card_history",
+          "rows_read": 12,
+          "files_read": 1,
+          "files_pruned": 0,
+          "bytes_read": 10332431,
+          "duration_ms": 629
+        },
+        {
+          "query": "daily_slice",
+          "rows_read": 482650,
+          "files_read": 4,
+          "files_pruned": 0,
+          "bytes_read": 15055515,
+          "duration_ms": 678
+        }
+      ]
+    },
+    {
+      "label": "clustered",
+      "measured_at": "2026-11-16T20:06:48+00:00",
+      "catalog": "aml_prod",
+      "engine_version": "Databricks SQL 2026.45",
+      "layouts": [
+        {
+          "table": "silver.payment_transfer",
+          "clustering": [
+            "business_date",
+            "originator_account_id"
+          ],
+          "files": 4,
+          "bytes": 284879639
+        },
+        {
+          "table": "silver.card_transaction",
+          "clustering": [
+            "business_date",
+            "card_id"
+          ],
+          "files": 1,
+          "bytes": 79194340
+        }
+      ],
+      "measurements": [
+        {
+          "query": "account_outgoing",
+          "rows_read": 12,
+          "files_read": 2,
+          "files_pruned": 2,
+          "bytes_read": 16245985,
+          "duration_ms": 664
+        },
+        {
+          "query": "account_incoming",
+          "rows_read": 12,
+          "files_read": 4,
+          "files_pruned": 0,
+          "bytes_read": 37061979,
+          "duration_ms": 694
+        },
+        {
+          "query": "card_history",
+          "rows_read": 12,
+          "files_read": 1,
+          "files_pruned": 0,
+          "bytes_read": 10252883,
+          "duration_ms": 581
+        },
+        {
+          "query": "daily_slice",
+          "rows_read": 482650,
+          "files_read": 2,
+          "files_pruned": 2,
+          "bytes_read": 13476083,
+          "duration_ms": 672
+        }
+      ]
+    }
+  ]
+}

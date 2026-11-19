@@ -1,0 +1,46 @@
+/// Transaction monitoring rules (gold.aml_rule).
+table Rule
+	lineageTag: de6dfb33-0092-555c-a9a0-7cc2f6d86695
+
+	column 'Rule ID'
+		dataType: string
+		lineageTag: adae3c8a-e22c-54a4-b7b9-34d55ae8c2b1
+		summarizeBy: none
+		sourceColumn: rule_id
+
+	column 'Rule key'
+		dataType: string
+		isHidden
+		lineageTag: b5a851fd-586d-5ea7-90f8-00a72086daae
+		summarizeBy: none
+		sourceColumn: rule_key
+
+	column 'Rule name'
+		dataType: string
+		lineageTag: 3bcfbaa0-7e6a-545e-a40e-9efd3b924e16
+		summarizeBy: none
+		sourceColumn: rule_name
+
+	column Typology
+		dataType: string
+		lineageTag: a44e0989-0e15-5b20-8bbf-0a7a312a47bd
+		summarizeBy: none
+		sourceColumn: typology
+
+	column Description
+		dataType: string
+		lineageTag: 842cb0af-1ce0-5da5-a818-70ffbec05672
+		summarizeBy: none
+		sourceColumn: description
+
+	partition Rule = m
+		mode: import
+		source =
+				let
+				    Source = Lakehouse{[Name = "gold", Kind = "Schema"]}[Data]{[Name = "aml_rule", Kind = "Table"]}[Data],
+				    Columns = Table.SelectColumns(Source, {"rule_id", "rule_key", "rule_name", "typology", "description"}),
+				    Typed = Table.TransformColumnTypes(Columns, {{"rule_id", type text}, {"rule_key", type text}, {"rule_name", type text}, {"typology", type text}, {"description", type text}})
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

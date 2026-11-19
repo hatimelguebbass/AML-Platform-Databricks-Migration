@@ -1,0 +1,51 @@
+/// Business dates published to the lakehouse: every date the volume checks ran on, so days
+/// without an alert still count.
+table Date
+	dataCategory: Time
+	lineageTag: 3fdcf90d-2bf2-5c9e-90b5-bc1f1824ae7d
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: yyyy-mm-dd
+		lineageTag: 34d17648-66d7-56da-a361-d7310f713716
+		summarizeBy: none
+		sourceColumn: [Date]
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Weekday
+		dataType: string
+		lineageTag: 538d99d6-836e-5728-85ec-c9e4667529f5
+		summarizeBy: none
+		sourceColumn: [Weekday]
+		sortByColumn: 'Weekday number'
+
+	column 'Weekday number'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ae6e52a4-c6ee-5fb3-91fd-755f8214b70f
+		summarizeBy: none
+		sourceColumn: [Weekday number]
+
+	/// Weekday or Weekend: the volume checks compare a date with the same kind of day.
+	column 'Day kind'
+		dataType: string
+		lineageTag: 0ee8a103-456d-589a-8a93-3cc3b98d3e35
+		summarizeBy: none
+		sourceColumn: [Day kind]
+
+	partition Date = calculated
+		mode: import
+		source = ```
+				VAR FirstDate = MIN ( 'Volume check'[Business date] )
+				VAR LastDate = MAX ( 'Volume check'[Business date] )
+				RETURN
+				    ADDCOLUMNS (
+				        CALENDAR ( COALESCE ( FirstDate, TODAY () ), COALESCE ( LastDate, TODAY () ) ),
+				        "Weekday", FORMAT ( [Date], "ddd", "en-US" ),
+				        "Weekday number", WEEKDAY ( [Date], 2 ),
+				        "Day kind", IF ( WEEKDAY ( [Date], 2 ) > 5, "Weekend", "Weekday" )
+				    )
+				```
