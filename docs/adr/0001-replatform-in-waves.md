@@ -4,7 +4,7 @@
 
 ## Context
 
-The source is the on-premises AML platform of [aml-compliance-platform](https://github.com/Revoyaldev/aml-compliance-platform),
+The source is the on-premises AML platform of [AML-Compliance-Platform](https://github.com/hatimelguebbass/AML-Compliance-Platform),
 pinned at the commit in `source/pin.toml`: Spark and Iceberg on SeaweedFS with a Nessie catalog,
 Trino, dbt on Trino, Airflow, Kafka and Debezium for the core banking change data capture, and a
 Power BI report. It produces the alerts of seven transaction monitoring rules, sanctions screening

@@ -2,7 +2,7 @@
 
 # SQL translation report
 
-Each ported model's compiled source SQL (Trino, [aml-compliance-platform](https://github.com/Revoyaldev/aml-compliance-platform) at `5da92299e29c`) was transpiled to Databricks SQL by sqlglot 30.31.0, run on the dev SQL warehouse (Databricks SQL 2026.44), and its rows compared with the table the reviewed port built, lineage columns aside. Measured by `make translation`.
+Each ported model's compiled source SQL (Trino, [AML-Compliance-Platform](https://github.com/hatimelguebbass/AML-Compliance-Platform) at `db07483041d7`) was transpiled to Databricks SQL by sqlglot 30.31.0, run on the dev SQL warehouse (Databricks SQL 2026.44), and its rows compared with the table the reviewed port built, lineage columns aside. Measured by `make translation`.
 
 | Outcome | Models |
 |---|---|

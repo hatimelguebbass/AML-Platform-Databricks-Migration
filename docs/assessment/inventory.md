@@ -2,7 +2,7 @@
 
 # Source inventory
 
-Collected from [aml-compliance-platform](https://github.com/Revoyaldev/aml-compliance-platform) at commit `5da92299e29c`, through Trino 484.
+Collected from [AML-Compliance-Platform](https://github.com/hatimelguebbass/AML-Compliance-Platform) at commit `db07483041d7`, through Trino 484.
 
 ## Summary
 

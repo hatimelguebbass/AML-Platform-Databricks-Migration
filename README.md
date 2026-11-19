@@ -22,7 +22,7 @@ executed.
 
 | | |
 |---|---|
-| Source | [aml-compliance-platform](https://github.com/Revoyaldev/aml-compliance-platform) at the commit pinned in [`source/pin.toml`](source/pin.toml) |
+| Source | [AML-Compliance-Platform](https://github.com/hatimelguebbass/AML-Compliance-Platform) at the commit pinned in [`source/pin.toml`](source/pin.toml) |
 | Target | Azure Databricks, Unity Catalog, Delta Lake, serverless jobs and SQL warehouse |
 | Deployment | Databricks Asset Bundles (Declarative Automation Bundles), Terraform for Azure resources |
 | Strategy | Re-platform in four waves, parallel run with column-level parity, executed rollback ([ADR 0001](docs/adr/0001-replatform-in-waves.md)) |
@@ -172,3 +172,7 @@ Every target: `make help`.
 | [0008](docs/adr/0008-migration-acceptance-and-parity.md) | Acceptance by a parallel run: hashed fingerprints per table and date, differing buckets compared row by row, zero difference on alerts |
 | [0009](docs/adr/0009-reliability-security-and-cost.md) | Source checks ported as an audited layer; lineage checked against dbt's graph; access reported by role; cost measured against the estimate; liquid clustering on the two large tables |
 | [0010](docs/adr/0010-cutover-and-rollback.md) | Report rendered with a serving parameter; cutover and rollback as a parameter change; go/no-go as recorded checks; key rotation all or nothing |
+
+## License
+
+[MIT](LICENSE)

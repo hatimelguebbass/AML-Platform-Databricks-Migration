@@ -104,7 +104,7 @@ def test_report_round_trips_and_renders(tmp_path: Path) -> None:
     report = Report(
         format_version=1,
         sqlglot_version="30.31.0",
-        source_commit="5da92299e29cedb9b2b963a986b5993a9ef1113e",
+        source_commit="db07483041d7ec803ce3799cd7b201e0ec2859bb",
         engine_version="Databricks SQL 2026.44",
         measured_on="2026-11-15",
         models=(

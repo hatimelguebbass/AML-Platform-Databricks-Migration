@@ -1,4 +1,4 @@
 # The on-premises platform this repository migrates. Every assessment figure and every parity
 # check refers to this exact commit; moving it is a reviewed change that reruns the assessment.
-repository = "https://github.com/Revoyaldev/aml-compliance-platform"
-commit = "5da92299e29cedb9b2b963a986b5993a9ef1113e"
+repository = "https://github.com/hatimelguebbass/AML-Compliance-Platform"
+commit = "db07483041d7ec803ce3799cd7b201e0ec2859bb"
